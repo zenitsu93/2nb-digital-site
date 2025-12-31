@@ -45,9 +45,4 @@ npm run build
 - `/actualites/:id` - Détail d'un article
 - `/contact` - Contact
 
-## Personnalisation
-
-- **Logo** : Placez votre logo dans `public/logo.png`
-- **Couleurs** : Modifiez les couleurs dans `src/css/globals.css`
-- **Contenu** : Modifiez les données dans les fichiers de vues
 
