@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String   @db.Text
+  icon        String?
+  features    String[] // Array of features
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("services")
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String   @db.Text
+  image       String?
+  video       String?  // URL to video
+  category    String
+  tags        String[] // Array of tags
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("projects")
+}
+
+model Article {
+  id          Int      @id @default(autoincrement())
+  title       String
+  excerpt     String   @db.Text
+  content     String   @db.Text
+  image       String?
+  video       String?  // URL to video
+  author      String
+  date        DateTime @default(now())
+  category    String
+  tags        String[] // Array of tags
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("articles")
+}
+
+model Partner {
+  id          Int      @id @default(autoincrement())
+  name        String
+  logo        String   // URL to logo image
+  website     String?  // URL to partner website
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("partners")
+}
+

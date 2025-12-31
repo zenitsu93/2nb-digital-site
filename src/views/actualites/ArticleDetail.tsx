@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router';
 import CardBox from '../../components/shared/CardBox';
 import { Badge, Button } from 'flowbite-react';
 import { Icon } from '@iconify/react';
+import { articlesApi, Article } from '../../services/api/articles';
 
-// Données des articles - à remplacer par une API
+// Données des articles - chargées depuis l'API
 const articles = [
   {
     id: 1,
@@ -150,7 +152,48 @@ const articles = [
 
 const ArticleDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const article = articles.find((a) => a.id === Number(id));
+  const [article, setArticle] = useState<Article | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchArticle = async () => {
+      try {
+        if (id) {
+          const data = await articlesApi.getById(Number(id));
+          setArticle(data);
+        }
+      } catch (error) {
+        console.error('Error fetching article:', error);
+        // Fallback sur les exemples si l'API échoue
+        const exampleArticle = articles.find((a) => a.id === Number(id));
+        if (exampleArticle) {
+          // Convertir l'exemple en format Article
+          setArticle({
+            id: exampleArticle.id,
+            title: exampleArticle.title,
+            excerpt: exampleArticle.excerpt,
+            content: exampleArticle.content,
+            image: exampleArticle.image,
+            video: undefined,
+            author: exampleArticle.author,
+            date: exampleArticle.date,
+            category: exampleArticle.category,
+            tags: exampleArticle.tags,
+            published: true,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchArticle();
+  }, [id]);
+
+  if (loading) {
+    return <div className="container mx-auto px-4 py-12 text-center">Chargement...</div>;
+  }
 
   if (!article) {
     return <Navigate to="/actualites" />;
@@ -171,13 +214,25 @@ const ArticleDetail = () => {
         {/* Contenu principal */}
         <div className="lg:col-span-8 col-span-12">
           <CardBox className="mb-6 p-0 overflow-hidden">
-            <div className="h-[400px] w-full overflow-hidden">
-              <img
-                src={article.image}
-                alt={article.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            {article.video ? (
+              <div className="h-[400px] w-full overflow-hidden bg-black">
+                <video
+                  src={article.video}
+                  controls
+                  className="w-full h-full object-contain"
+                >
+                  Votre navigateur ne supporte pas la lecture de vidéos.
+                </video>
+              </div>
+            ) : article.image ? (
+              <div className="h-[400px] w-full overflow-hidden">
+                <img
+                  src={article.image}
+                  alt={article.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : null}
             <div className="p-6">
               <div className="flex items-center gap-3 mb-4 flex-wrap">
                 <Badge color="primary">{article.category}</Badge>
@@ -195,14 +250,13 @@ const ArticleDetail = () => {
                   </div>
                   <div>
                     <p className="font-medium text-dark">{article.author}</p>
-                    <p className="text-sm text-dark/50">{article.authorRole}</p>
                   </div>
                 </div>
               </div>
-              <div
-                className="prose max-w-none text-dark/70"
-                dangerouslySetInnerHTML={{ __html: article.content }}
-              />
+              <p className="text-lg text-dark/70 mb-4">{article.excerpt}</p>
+              <div className="prose max-w-none text-dark/70 whitespace-pre-wrap">
+                {article.content}
+              </div>
               <div className="flex flex-wrap gap-2 mt-8 pt-6 border-t border-gray-200">
                 {article.tags.map((tag, index) => (
                   <Badge key={index} color="light" className="text-sm">
@@ -237,10 +291,6 @@ const ArticleDetail = () => {
                 <p className="text-sm text-dark/50 mb-1">Catégorie</p>
                 <Badge color="primary">{article.category}</Badge>
               </div>
-              <div>
-                <p className="text-sm text-dark/50 mb-1">Temps de lecture</p>
-                <p className="font-medium text-dark">{article.readTime}</p>
-              </div>
             </div>
           </CardBox>
 
@@ -259,4 +309,5 @@ const ArticleDetail = () => {
 };
 
 export default ArticleDetail;
+
 

@@ -1,48 +1,37 @@
+import { useEffect, useState } from 'react';
 import CardBox from '../../components/shared/CardBox';
 import { Badge, Button } from 'flowbite-react';
 import { Icon } from '@iconify/react';
 import { Link } from 'react-router';
-
-// Données des services - à remplacer plus tard par une API/base de données
-const services = [
-  {
-    id: 1,
-    title: 'Ingénierie et Développement de Solutions Digitales',
-    description: 'Conception, développement, intégration et déploiement de solutions logicielles, d\'applications web et mobiles, ainsi que de plateformes digitales innovantes. Réalisation de prestations d\'ingénierie informatiques incluant l\'architecture de systèmes, le développement sur mesure et la maintenance applicative.',
-    icon: 'solar:code-2-line-duotone',
-    features: ['Applications Web', 'Applications Mobiles', 'Architecture Systèmes', 'Développement sur Mesure', 'Maintenance Applicative']
-  },
-  {
-    id: 2,
-    title: 'Conseil en Transformation Digitale et Management',
-    description: 'Accompagnement stratégique et opérationnel des entreprises dans leur transformation digitale, l\'optimisation de leurs processus et la conduite du changement. Conseil en systèmes d\'information, sélection et implémentation d\'ERP, CRM, outils de gestion intégrés et solutions collaboratives.',
-    icon: 'solar:chart-2-bold-duotone',
-    features: ['Transformation Digitale', 'ERP & CRM', 'Optimisation Processus', 'Audits Digitaux', 'Feuilles de Route Stratégiques']
-  },
-  {
-    id: 3,
-    title: 'Data Science et Intelligence Artificielle',
-    description: 'Collecte, traitement, analyse et valorisation des données (Big Data, Business Intelligence). Développement et déploiement de solutions basées sur l\'intelligence artificielle, le Machine Learning et l\'analyse prédictive. Conseil en stratégie data et mise en place de dispositifs de gouvernance des données.',
-    icon: 'solar:graph-up-line-duotone',
-    features: ['Big Data', 'Business Intelligence', 'Machine Learning', 'Analyse Prédictive', 'Gouvernance des Données']
-  },
-  {
-    id: 4,
-    title: 'Stratégie Marketing Digital et Communication',
-    description: 'Définition et mise en œuvre de stratégies de marketing digital incluant le SEO/SEA, le content marketing, les réseaux sociaux et l\'automatisation marketing. Conseil en stratégie de marque, e-réputation et communication digitale.',
-    icon: 'solar:megaphone-line-duotone',
-    features: ['SEO/SEA', 'Content Marketing', 'Réseaux Sociaux', 'Automatisation Marketing', 'E-réputation']
-  },
-  {
-    id: 5,
-    title: 'Formation et Renforcement des Compétences',
-    description: 'Conception et animation de programmes de formation sur les outils digitaux, les méthodologies agiles et les compétences numériques. Accompagnement à l\'adoption des nouvelles technologies et au développement des talents.',
-    icon: 'solar:book-bookmark-line-duotone',
-    features: ['Formation Digitale', 'Méthodologies Agiles', 'Compétences Numériques', 'Adoption Technologies', 'Développement Talents']
-  }
-];
+import { servicesApi, Service } from '../../services/api/services';
 
 const Services = () => {
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const data = await servicesApi.getAll();
+        setServices(data);
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServices();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center">
+          <div className="text-gray-500">Chargement des services...</div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="container mx-auto px-4 py-12">
       {/* Header Section */}

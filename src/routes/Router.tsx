@@ -6,6 +6,7 @@ import Loadable from 'src/layouts/full/shared/loadable/Loadable';
 
 /* ***Layouts**** */
 const EntrepriseLayout = Loadable(lazy(() => import('../layouts/entreprise/EntrepriseLayout')));
+const AdminLayout = Loadable(lazy(() => import('../layouts/admin/AdminLayout')));
 
 // Pages entreprise
 const Accueil = Loadable(lazy(() => import('../views/accueil/Accueil')));
@@ -20,6 +21,13 @@ const Contact = Loadable(lazy(() => import('../views/contact/Contact')));
 const MentionsLegales = Loadable(lazy(() => import('../views/legal/MentionsLegales')));
 const PolitiqueConfidentialite = Loadable(lazy(() => import('../views/legal/PolitiqueConfidentialite')));
 const CGV = Loadable(lazy(() => import('../views/legal/CGV')));
+
+// Pages admin
+const AdminDashboard = Loadable(lazy(() => import('../views/admin/Dashboard')));
+const AdminServices = Loadable(lazy(() => import('../views/admin/services/AdminServices')));
+const AdminProjects = Loadable(lazy(() => import('../views/admin/projects/AdminProjects')));
+const AdminArticles = Loadable(lazy(() => import('../views/admin/articles/AdminArticles')));
+const AdminPartners = Loadable(lazy(() => import('../views/admin/partners/AdminPartners')));
 
 const Router = [
   {
@@ -37,6 +45,17 @@ const Router = [
       { path: '/privacy', exact: true, element: <PolitiqueConfidentialite /> },
       { path: '/terms', exact: true, element: <CGV /> },
       { path: '*', element: <Navigate to="/" /> },
+    ],
+  },
+  {
+    path: '/admin',
+    element: <AdminLayout />,
+    children: [
+      { path: '/admin', exact: true, element: <AdminDashboard /> },
+      { path: '/admin/services', exact: true, element: <AdminServices /> },
+      { path: '/admin/projects', exact: true, element: <AdminProjects /> },
+      { path: '/admin/articles', exact: true, element: <AdminArticles /> },
+      { path: '/admin/partners', exact: true, element: <AdminPartners /> },
     ],
   },
 ];
