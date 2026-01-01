@@ -15,6 +15,7 @@ model Service {
   title       String
   description String   @db.Text
   icon        String?
+  image       String?  // URL to service image
   features    String[] // Array of features
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

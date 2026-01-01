@@ -1,43 +1,16 @@
 import { Link } from 'react-router';
 import { useEffect, useState, useRef } from 'react';
 import CardBox from '../../components/shared/CardBox';
-import { Badge, Card } from 'flowbite-react';
+import { Badge, Card, Button } from 'flowbite-react';
 import { Icon } from '@iconify/react';
 import Testimonials from '../../components/entreprise/Testimonials';
 import AnimatedAccordion from '../../components/shared/AnimatedAccordion';
 import AnimatedButton from '../../components/shared/AnimatedButton';
 import TextType from '../../components/shared/TextType';
-import GlareHover from '../../components/shared/GlareHover';
+import TiltedCard from '../../components/shared/TiltedCard';
 import LogoLoop from '../../components/shared/LogoLoop';
 import { partnersApi, Partner } from '../../services/api/partners';
-
-// Services principaux à afficher sur la page d'accueil
-const servicesAccueil = [
-  {
-    id: 1,
-    title: 'Ingénierie et Développement',
-    description: 'Solutions logicielles, applications web et mobiles innovantes.',
-    icon: 'solar:code-2-line-duotone',
-  },
-  {
-    id: 2,
-    title: 'Transformation Digitale',
-    description: 'Accompagnement stratégique dans votre transition numérique.',
-    icon: 'solar:chart-2-bold-duotone',
-  },
-  {
-    id: 3,
-    title: 'Data & Intelligence Artificielle',
-    description: 'Big Data, Machine Learning et analyse prédictive.',
-    icon: 'solar:graph-up-line-duotone',
-  },
-  {
-    id: 4,
-    title: 'Marketing Digital',
-    description: 'Stratégies digitales et communication pour votre marque.',
-    icon: 'solar:megaphone-line-duotone',
-  },
-];
+import { servicesApi, Service } from '../../services/api/services';
 
 // Variable globale pour partager l'état du son entre les composants
 let globalVideoRef: HTMLVideoElement | null = null;
@@ -271,6 +244,8 @@ const VideoSection = () => {
 
 const Accueil = () => {
   const [partners, setPartners] = useState<Partner[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
 
   useEffect(() => {
     const fetchPartners = async () => {
@@ -283,6 +258,23 @@ const Accueil = () => {
     };
     fetchPartners();
   }, []);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const data = await servicesApi.getAll();
+        setServices(data);
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      } finally {
+        setServicesLoading(false);
+      }
+    };
+    fetchServices();
+  }, []);
+
+  // Prendre les 4 premiers services
+  const displayedServices = services.slice(0, 4);
 
   const faqItems = [
     {
@@ -365,51 +357,70 @@ const Accueil = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {servicesAccueil.map((service) => (
-              <GlareHover
-                key={service.id}
-                width="100%"
-                height="100%"
-                background="transparent"
-                borderRadius="0.75rem"
-                borderColor="transparent"
-                glareColor="#d4af37"
-                glareOpacity={0.8}
-                glareAngle={-45}
-                glareSize={400}
-                transitionDuration={1000}
-                playOnce={false}
-                className="h-full"
-              >
-                <Card className="h-full flex flex-col w-full border border-gray-200 shadow-md relative overflow-hidden">
-                  <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                    {service.title}
-                  </h5>
-                  <p className="font-normal text-gray-700 dark:text-gray-400 pb-[0.625rem] flex-1">
-                    {service.description}
-                  </p>
-                  <Link to="/services">
-                    <AnimatedButton variant="primary" className="w-fit">
-                      En savoir plus
-                      <svg
-                        className="-mr-1 ml-2 h-4 w-4"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </AnimatedButton>
-                  </Link>
-                </Card>
-              </GlareHover>
-            ))}
-          </div>
+          {servicesLoading ? (
+            <div className="text-center py-12">
+              <div className="text-gray-500">Chargement des services...</div>
+            </div>
+          ) : displayedServices.length === 0 ? (
+            <CardBox className="py-12 mb-8">
+              <div className="text-center">
+                <p className="text-lg text-dark/70 mb-2">Aucun service disponible pour le moment.</p>
+                <p className="text-sm text-dark/50">Il n'y a aucun service à présenter.</p>
+              </div>
+            </CardBox>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                {displayedServices.map((service) => (
+                  <div key={service.id} className="h-[300px]">
+                    <TiltedCard
+                      imageSrc={service.image}
+                      altText={service.title}
+                      captionText={service.title}
+                      containerHeight="100%"
+                      containerWidth="100%"
+                      imageHeight="100%"
+                      imageWidth="100%"
+                      rotateAmplitude={12}
+                      scaleOnHover={1.05}
+                      showMobileWarning={false}
+                      showTooltip={true}
+                      displayOverlayContent={true}
+                      overlayContent={
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent rounded-xl flex flex-col justify-end p-6">
+                          <h5 className="text-xl font-bold text-white mb-2">
+                            {service.title}
+                          </h5>
+                          <p className="text-sm text-white/90 line-clamp-2">
+                            {service.description}
+                          </p>
+                        </div>
+                      }
+                    >
+                      {!service.image && (
+                        <div className="flex flex-col items-center justify-center h-full text-center p-6">
+                          <Icon icon="solar:gallery-add-line-duotone" className="text-5xl text-primary/50 mb-4" />
+                          <p className="text-sm text-primary/70 font-medium">
+                            {service.title}
+                          </p>
+                        </div>
+                      )}
+                    </TiltedCard>
+                  </div>
+                ))}
+              </div>
+
+              {/* Bouton pour voir tous les services */}
+              <div className="text-center">
+                <Link to="/services">
+                  <AnimatedButton variant="primary" size="lg">
+                    Voir tous nos services
+                    <Icon icon="solar:arrow-right-line-duotone" className="ml-2" height={20} />
+                  </AnimatedButton>
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
@@ -500,7 +511,8 @@ const Accueil = () => {
                   Contactez-nous dès aujourd'hui pour discuter de vos projets
                 </p>
                 <Link to="/contact" className="mx-auto mt-4">
-                  <AnimatedButton variant="primary" className="w-fit rounded-full px-5 h-[42px]">
+                  <AnimatedButton variant="primary" size="lg">
+                    <Icon icon="solar:phone-calling-line-duotone" className="mr-2" height={20} />
                     Nous contacter
                   </AnimatedButton>
                 </Link>

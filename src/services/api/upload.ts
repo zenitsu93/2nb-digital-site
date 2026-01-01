@@ -13,8 +13,17 @@ export const uploadApi = {
     const formData = new FormData();
     formData.append('file', file);
 
+    // Récupérer le token d'authentification
+    const token = localStorage.getItem('auth_token');
+    
+    const headers: HeadersInit = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/upload`, {
       method: 'POST',
+      headers,
       body: formData,
     });
 

@@ -38,7 +38,7 @@ router.get('/:id', async (req, res) => {
 // CREATE service (admin only)
 router.post('/', authenticateToken, async (req, res) => {
   try {
-    const { title, description, icon, features } = req.body;
+    const { title, description, image, features } = req.body;
     
     if (!title || !description) {
       return res.status(400).json({ error: 'Title and description are required' });
@@ -48,8 +48,8 @@ router.post('/', authenticateToken, async (req, res) => {
       data: {
         title,
         description,
-        icon: icon || null,
-        features: features || []
+        image: image || null,
+        features: Array.isArray(features) ? features : []
       }
     });
     
@@ -63,16 +63,19 @@ router.post('/', authenticateToken, async (req, res) => {
 router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, icon, features } = req.body;
+    const { title, description, image, features } = req.body;
+    
+    // Construire l'objet de données à mettre à jour
+    const updateData = {};
+    
+    if (title !== undefined) updateData.title = title;
+    if (description !== undefined) updateData.description = description;
+    if (image !== undefined) updateData.image = image || null;
+    if (features !== undefined) updateData.features = Array.isArray(features) ? features : [];
     
     const service = await prisma.service.update({
       where: { id: parseInt(id) },
-      data: {
-        title,
-        description,
-        icon: icon || null,
-        features: features || []
-      }
+      data: updateData
     });
     
     res.json(service);

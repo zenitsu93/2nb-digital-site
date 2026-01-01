@@ -27,8 +27,8 @@ const AnimatedButton = forwardRef<HTMLButtonElement, AnimatedButtonProps>(({
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.05, y: -2 }}
+      whileTap={{ scale: 0.95 }}
       transition={{ duration: 0.2, ease: 'easeInOut' }}
       className="inline-block"
     >
@@ -36,21 +36,22 @@ const AnimatedButton = forwardRef<HTMLButtonElement, AnimatedButtonProps>(({
         ref={ref}
         color={variant === 'primary' ? 'primary' : variant === 'secondary' ? 'secondary' : variant === 'outline' ? 'outline' : 'light'}
         size={size}
-        className={`${baseClasses} ${sizeClasses[size]} ${className}`}
+        className={`${baseClasses} ${sizeClasses[size]} ${className} shadow-lg hover:shadow-xl transition-shadow duration-300`}
         {...props}
       >
         <motion.span
           className="relative z-10 flex items-center justify-center gap-2"
           initial={{ opacity: 1 }}
-          whileHover={{ opacity: 1 }}
+          whileHover={{ opacity: 1, x: 2 }}
+          transition={{ duration: 0.2 }}
         >
           {children}
         </motion.span>
         <motion.div
-          className="absolute inset-0 bg-secondary/20"
+          className="absolute inset-0 bg-white/30"
           initial={{ x: '-100%', opacity: 0 }}
           whileHover={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.3, ease: 'easeInOut' }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
         />
       </FlowbiteButton>
     </motion.div>

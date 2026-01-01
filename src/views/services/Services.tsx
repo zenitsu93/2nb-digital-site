@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import CardBox from '../../components/shared/CardBox';
+import TiltedCard from '../../components/shared/TiltedCard';
 import { Badge, Button } from 'flowbite-react';
 import { Icon } from '@iconify/react';
 import { Link } from 'react-router';
@@ -53,54 +54,70 @@ const Services = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {services.map((service) => (
-            <CardBox key={service.id} className="p-0 overflow-hidden group card-hover h-full flex flex-col hover:shadow-xl transition-all duration-300">
-              {/* Icon Header */}
-              <div className="relative bg-gradient-to-br from-primary/20 to-primary/5 p-8">
-                <div className="flex items-center justify-center mb-4">
-                  <div className="p-4 bg-white rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <Icon icon={service.icon} className="text-4xl text-primary" height={40} />
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-dark text-center group-hover:text-primary transition-colors">
-                  {service.title}
-                </h3>
-              </div>
-
-              {/* Content */}
-              <div className="p-6 flex-1 flex flex-col">
-                <p className="text-dark/70 text-sm mb-6 flex-1 line-clamp-4">
-                  {service.description}
-                </p>
-
-                {/* Features */}
-                <div className="mb-6">
-                  <h4 className="text-sm font-semibold text-dark mb-3 flex items-center gap-2">
-                    <Icon icon="solar:check-circle-line-duotone" className="text-primary" />
-                    Caractéristiques
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {service.features.slice(0, 3).map((feature, index) => (
-                      <Badge key={index} color="light" className="text-xs">
-                        {feature}
-                      </Badge>
-                    ))}
-                    {service.features.length > 3 && (
-                      <Badge color="light" className="text-xs">
-                        +{service.features.length - 3} autres
-                      </Badge>
+            <div key={service.id} className="h-[400px]">
+              <TiltedCard
+                imageSrc={service.image}
+                altText={service.title}
+                captionText={service.title}
+                containerHeight="100%"
+                containerWidth="100%"
+                imageHeight="100%"
+                imageWidth="100%"
+                rotateAmplitude={14}
+                scaleOnHover={1.08}
+                showMobileWarning={false}
+                showTooltip={true}
+                displayOverlayContent={true}
+                overlayContent={
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent rounded-xl flex flex-col justify-end p-6">
+                    <h3 className="text-2xl font-bold text-white mb-3">
+                      {service.title}
+                    </h3>
+                    <p className="text-sm text-white/90 mb-4 line-clamp-2">
+                      {service.description}
+                    </p>
+                    
+                    {/* Features */}
+                    {service.features && service.features.length > 0 && (
+                      <div className="mb-4">
+                        <div className="flex flex-wrap gap-2">
+                          {service.features.slice(0, 3).map((feature, index) => (
+                            <Badge key={index} className="text-xs bg-white/20 text-white border-white/30">
+                              {feature}
+                            </Badge>
+                          ))}
+                          {service.features.length > 3 && (
+                            <Badge className="text-xs bg-white/20 text-white border-white/30">
+                              +{service.features.length - 3} autres
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
                     )}
-                  </div>
-                </div>
 
-                {/* CTA Button */}
-                <Link to="/contact" className="mt-auto">
-                  <Button color="primary" className="w-full group-hover:scale-105 transition-transform">
-                    Demander un devis
-                    <Icon icon="solar:arrow-right-line-duotone" className="ml-2" height={18} />
-                  </Button>
-                </Link>
-              </div>
-            </CardBox>
+                    {/* CTA Button */}
+                    <Link to="/contact" className="mt-auto">
+                      <Button color="primary" className="w-full">
+                        Demander un devis
+                        <Icon icon="solar:arrow-right-line-duotone" className="ml-2" height={18} />
+                      </Button>
+                    </Link>
+                  </div>
+                }
+              >
+                {!service.image && (
+                  <div className="flex flex-col items-center justify-center h-full text-center p-6">
+                    <Icon icon="solar:gallery-add-line-duotone" className="text-6xl text-primary/50 mb-4" />
+                    <p className="text-lg text-primary/70 font-semibold mb-2">
+                      {service.title}
+                    </p>
+                    <p className="text-sm text-primary/60">
+                      Image à ajouter
+                    </p>
+                  </div>
+                )}
+              </TiltedCard>
+            </div>
           ))}
         </div>
       )}
