@@ -1,5 +1,6 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -34,8 +35,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// CREATE service
-router.post('/', async (req, res) => {
+// CREATE service (admin only)
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const { title, description, icon, features } = req.body;
     
@@ -58,8 +59,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// UPDATE service
-router.put('/:id', async (req, res) => {
+// UPDATE service (admin only)
+router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, icon, features } = req.body;
@@ -83,8 +84,8 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE service
-router.delete('/:id', async (req, res) => {
+// DELETE service (admin only)
+router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     

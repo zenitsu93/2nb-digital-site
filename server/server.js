@@ -7,6 +7,8 @@ import projectRoutes from './routes/projects.js';
 import articleRoutes from './routes/articles.js';
 import partnerRoutes from './routes/partners.js';
 import uploadRoutes from './routes/upload.js';
+import authRoutes from './routes/auth.js';
+import { authenticateToken } from './middleware/auth.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import fs from 'fs';
@@ -39,12 +41,17 @@ if (!fs.existsSync(uploadsDir)) {
 // Servir les fichiers statiques (uploads)
 app.use('/uploads', express.static(uploadsDir));
 
-// Routes
+// Routes publiques
+app.use('/api/auth', authRoutes);
+
+// Routes publiques (lecture seule pour le site)
 app.use('/api/services', serviceRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/articles', articleRoutes);
 app.use('/api/partners', partnerRoutes);
-app.use('/api/upload', uploadRoutes);
+
+// Routes protégées (admin uniquement)
+app.use('/api/upload', authenticateToken, uploadRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

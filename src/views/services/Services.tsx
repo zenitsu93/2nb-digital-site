@@ -43,58 +43,67 @@ const Services = () => {
       </div>
 
       {/* Services Grid - Widget Style */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        {services.map((service) => (
-          <CardBox key={service.id} className="p-0 overflow-hidden group card-hover h-full flex flex-col hover:shadow-xl transition-all duration-300">
-            {/* Icon Header */}
-            <div className="relative bg-gradient-to-br from-primary/20 to-primary/5 p-8">
-              <div className="flex items-center justify-center mb-4">
-                <div className="p-4 bg-white rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  <Icon icon={service.icon} className="text-4xl text-primary" height={40} />
+      {services.length === 0 ? (
+        <CardBox className="py-12 mb-12">
+          <div className="text-center">
+            <p className="text-lg text-dark/70 mb-2">Aucun service disponible pour le moment.</p>
+            <p className="text-sm text-dark/50">Il n'y a aucun service à présenter.</p>
+          </div>
+        </CardBox>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          {services.map((service) => (
+            <CardBox key={service.id} className="p-0 overflow-hidden group card-hover h-full flex flex-col hover:shadow-xl transition-all duration-300">
+              {/* Icon Header */}
+              <div className="relative bg-gradient-to-br from-primary/20 to-primary/5 p-8">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="p-4 bg-white rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <Icon icon={service.icon} className="text-4xl text-primary" height={40} />
+                  </div>
                 </div>
-              </div>
-              <h3 className="text-xl font-bold text-dark text-center group-hover:text-primary transition-colors">
-                {service.title}
-              </h3>
-            </div>
-
-            {/* Content */}
-            <div className="p-6 flex-1 flex flex-col">
-              <p className="text-dark/70 text-sm mb-6 flex-1 line-clamp-4">
-                {service.description}
-              </p>
-
-              {/* Features */}
-              <div className="mb-6">
-                <h4 className="text-sm font-semibold text-dark mb-3 flex items-center gap-2">
-                  <Icon icon="solar:check-circle-line-duotone" className="text-primary" />
-                  Caractéristiques
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {service.features.slice(0, 3).map((feature, index) => (
-                    <Badge key={index} color="light" className="text-xs">
-                      {feature}
-                    </Badge>
-                  ))}
-                  {service.features.length > 3 && (
-                    <Badge color="light" className="text-xs">
-                      +{service.features.length - 3} autres
-                    </Badge>
-                  )}
-                </div>
+                <h3 className="text-xl font-bold text-dark text-center group-hover:text-primary transition-colors">
+                  {service.title}
+                </h3>
               </div>
 
-              {/* CTA Button */}
-              <Link to="/contact" className="mt-auto">
-                <Button color="primary" className="w-full group-hover:scale-105 transition-transform">
-                  Demander un devis
-                  <Icon icon="solar:arrow-right-line-duotone" className="ml-2" height={18} />
-                </Button>
-              </Link>
-            </div>
-          </CardBox>
-        ))}
-      </div>
+              {/* Content */}
+              <div className="p-6 flex-1 flex flex-col">
+                <p className="text-dark/70 text-sm mb-6 flex-1 line-clamp-4">
+                  {service.description}
+                </p>
+
+                {/* Features */}
+                <div className="mb-6">
+                  <h4 className="text-sm font-semibold text-dark mb-3 flex items-center gap-2">
+                    <Icon icon="solar:check-circle-line-duotone" className="text-primary" />
+                    Caractéristiques
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {service.features.slice(0, 3).map((feature, index) => (
+                      <Badge key={index} color="light" className="text-xs">
+                        {feature}
+                      </Badge>
+                    ))}
+                    {service.features.length > 3 && (
+                      <Badge color="light" className="text-xs">
+                        +{service.features.length - 3} autres
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+
+                {/* CTA Button */}
+                <Link to="/contact" className="mt-auto">
+                  <Button color="primary" className="w-full group-hover:scale-105 transition-transform">
+                    Demander un devis
+                    <Icon icon="solar:arrow-right-line-duotone" className="ml-2" height={18} />
+                  </Button>
+                </Link>
+              </div>
+            </CardBox>
+          ))}
+        </div>
+      )}
 
       {/* CTA Section */}
       <CardBox className="bg-gradient-to-r from-primary/10 to-primary/5 border-2 border-primary/20">

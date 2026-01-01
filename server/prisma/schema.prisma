@@ -66,3 +66,13 @@ model Partner {
   @@map("partners")
 }
 
+model Admin {
+  id          Int      @id @default(autoincrement())
+  username   String   @unique
+  password   String
+  email      String?  @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("admins")
+}

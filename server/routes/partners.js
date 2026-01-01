@@ -1,5 +1,6 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -34,8 +35,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST create partner
-router.post('/', async (req, res) => {
+// POST create partner (admin only)
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const { name, logo, website } = req.body;
     
@@ -67,8 +68,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT update partner
-router.put('/:id', async (req, res) => {
+// PUT update partner (admin only)
+router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const { name, logo, website } = req.body;
@@ -90,8 +91,8 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE partner
-router.delete('/:id', async (req, res) => {
+// DELETE partner (admin only)
+router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     await prisma.partner.delete({

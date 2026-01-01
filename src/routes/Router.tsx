@@ -3,6 +3,7 @@
 import  { lazy } from 'react';
 import { Navigate, createBrowserRouter } from "react-router";
 import Loadable from 'src/layouts/full/shared/loadable/Loadable';
+import ProtectedRoute from 'src/components/admin/ProtectedRoute';
 
 /* ***Layouts**** */
 const EntrepriseLayout = Loadable(lazy(() => import('../layouts/entreprise/EntrepriseLayout')));
@@ -23,6 +24,7 @@ const PolitiqueConfidentialite = Loadable(lazy(() => import('../views/legal/Poli
 const CGV = Loadable(lazy(() => import('../views/legal/CGV')));
 
 // Pages admin
+const Login = Loadable(lazy(() => import('../views/admin/Login')));
 const AdminDashboard = Loadable(lazy(() => import('../views/admin/Dashboard')));
 const AdminServices = Loadable(lazy(() => import('../views/admin/services/AdminServices')));
 const AdminProjects = Loadable(lazy(() => import('../views/admin/projects/AdminProjects')));
@@ -48,8 +50,16 @@ const Router = [
     ],
   },
   {
+    path: '/admin/login',
+    element: <Login />,
+  },
+  {
     path: '/admin',
-    element: <AdminLayout />,
+    element: (
+      <ProtectedRoute>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { path: '/admin', exact: true, element: <AdminDashboard /> },
       { path: '/admin/services', exact: true, element: <AdminServices /> },

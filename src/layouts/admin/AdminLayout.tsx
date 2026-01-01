@@ -1,11 +1,19 @@
 import { FC } from 'react';
-import { Outlet, Link, useLocation } from 'react-router';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router';
 import { Icon } from '@iconify/react';
-import { Sidebar, SidebarItem, SidebarItemGroup, SidebarItems } from 'flowbite-react';
+import { Sidebar, SidebarItem, SidebarItemGroup, SidebarItems, Button } from 'flowbite-react';
 import FullLogo from '../full/shared/logo/FullLogo';
+import { useAuth } from '../../contexts/AuthContext';
 
 const AdminLayout: FC = () => {
   const location = useLocation();
+  const { logout, admin } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/admin/login');
+  };
 
   const menuItems = [
     { path: '/admin', label: 'Dashboard', icon: 'solar:graph-up-line-duotone' },
@@ -41,6 +49,10 @@ const AdminLayout: FC = () => {
               })}
             </SidebarItemGroup>
             <SidebarItemGroup>
+              <div className="px-4 py-2">
+                <div className="text-xs text-gray-500 mb-2">Connecté en tant que</div>
+                <div className="text-sm font-medium text-dark mb-4">{admin?.username}</div>
+              </div>
               <Link to="/" className="block">
                 <SidebarItem
                   icon={() => <Icon icon="solar:home-2-line-duotone" size={20} />}
@@ -48,6 +60,17 @@ const AdminLayout: FC = () => {
                   Retour au site
                 </SidebarItem>
               </Link>
+              <div className="px-4 pt-2">
+                <Button
+                  color="failure"
+                  size="sm"
+                  className="w-full"
+                  onClick={handleLogout}
+                >
+                  <Icon icon="solar:logout-2-line-duotone" className="mr-2" size={18} />
+                  Déconnexion
+                </Button>
+              </div>
             </SidebarItemGroup>
           </SidebarItems>
         </Sidebar>
