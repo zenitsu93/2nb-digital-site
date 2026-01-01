@@ -77,3 +77,17 @@ model Admin {
 
   @@map("admins")
 }
+
+model Testimonial {
+  id          Int      @id @default(autoincrement())
+  name        String
+  role        String
+  company     String
+  image       String?
+  content     String   @db.Text
+  rating      Int      @default(5) // Rating from 1 to 5
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("testimonials")
+}

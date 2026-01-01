@@ -21,6 +21,7 @@ const AdminLayout: FC = () => {
     { path: '/admin/projects', label: 'Projets', icon: 'solar:folder-with-files-linear' },
     { path: '/admin/articles', label: 'Articles', icon: 'solar:document-text-line-duotone' },
     { path: '/admin/partners', label: 'Partenaires', icon: 'solar:users-group-two-rounded-line-duotone' },
+    { path: '/admin/testimonials', label: 'Témoignages', icon: 'solar:quote-up-line-duotone' },
   ];
 
   return (

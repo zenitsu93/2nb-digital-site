@@ -30,6 +30,7 @@ const AdminServices = Loadable(lazy(() => import('../views/admin/services/AdminS
 const AdminProjects = Loadable(lazy(() => import('../views/admin/projects/AdminProjects')));
 const AdminArticles = Loadable(lazy(() => import('../views/admin/articles/AdminArticles')));
 const AdminPartners = Loadable(lazy(() => import('../views/admin/partners/AdminPartners')));
+const AdminTestimonials = Loadable(lazy(() => import('../views/admin/testimonials/AdminTestimonials')));
 
 const Router = [
   {
@@ -66,6 +67,7 @@ const Router = [
       { path: '/admin/projects', exact: true, element: <AdminProjects /> },
       { path: '/admin/articles', exact: true, element: <AdminArticles /> },
       { path: '/admin/partners', exact: true, element: <AdminPartners /> },
+      { path: '/admin/testimonials', exact: true, element: <AdminTestimonials /> },
     ],
   },
 ];

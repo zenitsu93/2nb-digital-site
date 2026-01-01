@@ -6,6 +6,7 @@ import serviceRoutes from './routes/services.js';
 import projectRoutes from './routes/projects.js';
 import articleRoutes from './routes/articles.js';
 import partnerRoutes from './routes/partners.js';
+import testimonialRoutes from './routes/testimonials.js';
 import uploadRoutes from './routes/upload.js';
 import authRoutes from './routes/auth.js';
 import { authenticateToken } from './middleware/auth.js';
@@ -49,6 +50,7 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/articles', articleRoutes);
 app.use('/api/partners', partnerRoutes);
+app.use('/api/testimonials', testimonialRoutes);
 
 // Routes protégées (admin uniquement)
 app.use('/api/upload', authenticateToken, uploadRoutes);

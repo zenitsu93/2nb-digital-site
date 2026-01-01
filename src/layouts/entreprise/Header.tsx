@@ -79,11 +79,11 @@ const Header = () => {
                   {item.name}
                 </Link>
               ))}
-              <Link to="/contact" onClick={() => setMobileMenuOpen(false)}>
-                <Button color="primary" className="w-full mt-2">
+              <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="mt-2">
+                <AnimatedButton variant="primary" size="sm" className="w-full">
                   <Icon icon="solar:phone-calling-line-duotone" className="mr-2" height={18} />
                   Nous contacter
-                </Button>
+                </AnimatedButton>
               </Link>
             </div>
           </div>
