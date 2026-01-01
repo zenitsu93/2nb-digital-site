@@ -1,14 +1,23 @@
-import { Link, useLocation } from 'react-router';
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router';
 import { Icon } from '@iconify/react';
-import AnimatedButton from '../../components/shared/AnimatedButton';
-import Logo from '../../components/entreprise/Logo';
+import {
+  Navbar,
+  NavBody,
+  NavItems,
+  MobileNav,
+  NavbarLogo,
+  NavbarButton,
+  MobileNavHeader,
+  MobileNavToggle,
+  MobileNavMenu,
+} from '../../components/ui/resizable-navbar';
 
 const Header = () => {
   const location = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const navigation = [
+  const navItems = [
     { name: 'Accueil', href: '/' },
     { name: 'Services', href: '/services' },
     { name: 'Réalisations', href: '/realisations' },
@@ -16,80 +25,59 @@ const Header = () => {
     { name: 'Contact', href: '/contact' },
   ];
 
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
-
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
-      <nav className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Logo />
+    <Navbar>
+      {/* Desktop Navigation */}
+      <NavBody>
+        <NavbarLogo />
+        <NavItems items={navItems} />
+        <div className="flex items-center gap-4">
+          <Link to="/contact">
+            <NavbarButton variant="primary">
+              <Icon icon="solar:phone-calling-line-duotone" className="mr-2" height={18} />
+              Nous contacter
+            </NavbarButton>
+          </Link>
+        </div>
+      </NavBody>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            {navigation.map((item) => (
+      {/* Mobile Navigation */}
+      <MobileNav>
+        <MobileNavHeader>
+          <NavbarLogo />
+          <MobileNavToggle
+            isOpen={isMobileMenuOpen}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          />
+        </MobileNavHeader>
+
+        <MobileNavMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)}>
+          {navItems.map((item, idx) => {
+            const isActive = location.pathname === item.href;
+            return (
               <Link
-                key={item.name}
+                key={`mobile-link-${idx}`}
                 to={item.href}
-                className={`text-sm font-medium transition-colors ${
-                  isActive(item.href)
-                    ? 'text-primary border-b-2 border-primary pb-1'
-                    : 'text-dark/70 hover:text-primary'
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`relative text-base font-medium transition-colors ${
+                  isActive ? 'text-primary' : 'text-dark/70 hover:text-primary'
                 }`}
               >
-                {item.name}
+                <span className="block">{item.name}</span>
               </Link>
-            ))}
-            <Link to="/contact">
-              <AnimatedButton variant="primary" size="sm" className="ml-4">
+            );
+          })}
+          <div className="flex w-full flex-col gap-4 pt-2">
+            <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+              <NavbarButton variant="primary" className="w-full">
                 <Icon icon="solar:phone-calling-line-duotone" className="mr-2" height={18} />
                 Nous contacter
-              </AnimatedButton>
+              </NavbarButton>
             </Link>
           </div>
-
-          {/* Mobile menu button */}
-          <button
-            className="md:hidden p-2"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            <Icon
-              icon={mobileMenuOpen ? 'solar:close-circle-line-duotone' : 'solar:hamburger-menu-line-duotone'}
-              className="text-2xl text-dark"
-            />
-          </button>
-        </div>
-
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-gray-200">
-            <div className="flex flex-col gap-4 pt-4">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`text-base font-medium ${
-                    isActive(item.href) ? 'text-primary' : 'text-dark/70 hover:text-primary'
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
-              <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="mt-2">
-                <AnimatedButton variant="primary" size="sm" className="w-full">
-                  <Icon icon="solar:phone-calling-line-duotone" className="mr-2" height={18} />
-                  Nous contacter
-                </AnimatedButton>
-              </Link>
-            </div>
-          </div>
-        )}
-      </nav>
-    </header>
+        </MobileNavMenu>
+      </MobileNav>
+    </Navbar>
   );
 };
 

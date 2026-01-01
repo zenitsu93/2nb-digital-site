@@ -11,6 +11,7 @@
     "postinstall": "flowbite-react patch"
   },
   "dependencies": {
+    "@heroui/react": "^2.8.7",
     "@iconify/react": "^5.1.0",
     "@radix-ui/react-accordion": "^1.2.12",
     "@svgr/rollup": "8.1.0",

@@ -91,7 +91,7 @@ const Dashboard = () => {
     {
       title: 'Témoignages',
       value: stats.testimonials,
-      icon: 'solar:quote-up-line-duotone',
+      icon: 'solar:chat-round-line-duotone',
       color: 'pink',
     },
   ];

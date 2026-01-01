@@ -259,10 +259,10 @@ const AdminServices = () => {
       <Modal show={showModal} onClose={handleCloseModal} size="4xl">
         <form onSubmit={handleSubmit} className="flex flex-col max-h-[90vh]">
           <div className="px-6 py-4 border-b flex-shrink-0">
-            <h3 className="text-xl font-semibold text-gray-900">
-              {editingService ? 'Modifier le service' : 'Ajouter un service'}
-            </h3>
-          </div>
+          <h3 className="text-xl font-semibold text-gray-900">
+            {editingService ? 'Modifier le service' : 'Ajouter un service'}
+          </h3>
+        </div>
           <div className="px-6 py-4 overflow-y-auto flex-1">
             <div className="space-y-4">
               <div>
@@ -335,12 +335,12 @@ const AdminServices = () => {
                       )}
                     </Button>
                   </div>
-                  <TextInput
+                <TextInput
                     id="image-url"
                     placeholder="Ou entrez une URL d'image"
                     value={formData.image}
                     onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  />
+                />
                 </div>
               </div>
               <div>

@@ -4,6 +4,7 @@ import customTheme from './utils/theme/custom-theme';
 import router from "./routes/Router";
 import { AuthProvider } from './contexts/AuthContext';
 import ClickSpark from './components/shared/ClickSpark';
+import SmoothCursor from './components/shared/SmoothCursor';
 
 
 function App() {
@@ -13,14 +14,25 @@ function App() {
       <ThemeModeScript />
       <ThemeProvider theme={customTheme}>
         <AuthProvider>
+          <SmoothCursor
+            color="#D4AF37"
+            size={20}
+            springConfig={{
+              damping: 100,
+              stiffness: 2000,
+              mass: 0.1,
+              restDelta: 0.0001,
+            }}
+          />
           <ClickSpark
             sparkColor="#D4AF37"
-            sparkSize={10}
-            sparkRadius={15}
-            sparkCount={8}
-            duration={400}
+            sparkSize={20}
+            sparkRadius={40}
+            sparkCount={16}
+            duration={800}
+            extraScale={1.5}
           >
-            <RouterProvider router={router} />
+      <RouterProvider router={router} />
           </ClickSpark>
         </AuthProvider>
       </ThemeProvider>

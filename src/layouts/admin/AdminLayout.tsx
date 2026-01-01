@@ -21,7 +21,7 @@ const AdminLayout: FC = () => {
     { path: '/admin/projects', label: 'Projets', icon: 'solar:folder-with-files-linear' },
     { path: '/admin/articles', label: 'Articles', icon: 'solar:document-text-line-duotone' },
     { path: '/admin/partners', label: 'Partenaires', icon: 'solar:users-group-two-rounded-line-duotone' },
-    { path: '/admin/testimonials', label: 'Témoignages', icon: 'solar:quote-up-line-duotone' },
+    { path: '/admin/testimonials', label: 'Témoignages', icon: 'solar:chat-round-line-duotone' },
   ];
 
   return (
@@ -41,7 +41,7 @@ const AdminLayout: FC = () => {
                   <Link key={item.path} to={item.path} className="block">
                     <SidebarItem
                       active={isActive}
-                      icon={() => <Icon icon={item.icon} size={20} />}
+                      icon={() => <Icon icon={item.icon} className="w-5 h-5" />}
                     >
                       {item.label}
                     </SidebarItem>
