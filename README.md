@@ -196,6 +196,47 @@ npm run db:studio
 - Le frontend tourne sur `http://localhost:5173`
 - Assurez-vous que PostgreSQL est en cours d'exécution avant de lancer les migrations
 
+## 🚀 Déploiement sur Vercel
+
+### Déploiement du Frontend
+
+1. **Installer Vercel CLI** (optionnel, pour déploiement en ligne de commande) :
+```bash
+npm i -g vercel
+```
+
+2. **Déployer via l'interface Vercel** (recommandé) :
+   - Allez sur [vercel.com](https://vercel.com)
+   - Connectez votre compte GitHub/GitLab/Bitbucket
+   - Importez votre projet
+   - Vercel détectera automatiquement Vite et configurera le build
+
+3. **Configurer les variables d'environnement** :
+   Dans les paramètres du projet Vercel, ajoutez :
+   ```
+   VITE_API_URL=https://votre-backend-url.com/api
+   ```
+   Remplacez `https://votre-backend-url.com/api` par l'URL de votre backend déployé.
+
+4. **Déploiement via CLI** (alternative) :
+```bash
+vercel
+```
+Suivez les instructions à l'écran.
+
+### Configuration
+
+Le fichier `vercel.json` est déjà configuré pour :
+- Détecter automatiquement Vite
+- Rediriger toutes les routes vers `index.html` (pour le routing React)
+- Utiliser le script `build` du `package.json`
+
+### Notes importantes
+
+- **Backend séparé** : Le backend dans le dossier `server` doit être déployé séparément (sur Vercel avec des fonctions serverless, ou sur un autre service comme Railway, Render, etc.)
+- **Variables d'environnement** : N'oubliez pas de configurer `VITE_API_URL` dans les paramètres Vercel
+- **Base de données** : Assurez-vous que votre backend a accès à une base de données PostgreSQL en production
+
 ## 🐛 Dépannage
 
 ### Erreur de connexion à la base de données
@@ -211,3 +252,8 @@ npm run db:studio
 - Arrêtez tous les processus Node.js
 - Vérifiez que PostgreSQL est accessible
 - Réessayez `npm run db:migrate`
+
+### Erreurs de déploiement Vercel
+- Vérifiez que toutes les variables d'environnement sont configurées
+- Vérifiez que le build fonctionne localement : `npm run build`
+- Consultez les logs de build dans le dashboard Vercel
