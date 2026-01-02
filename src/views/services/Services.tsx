@@ -39,7 +39,7 @@ const Services = () => {
     <div className="container mx-auto px-4 py-12">
       {/* Header Section */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-dark mb-4">Nos Services</h1>
+        <h1 className="text-4xl font-bold text-primary mb-4">Nos Services</h1>
         <p className="text-lg text-dark/70 max-w-3xl mx-auto">
           Nous accompagnons les entreprises dans leur transformation digitale avec une gamme complète de services allant du développement de solutions digitales à la formation, en passant par le conseil stratégique et l'intelligence artificielle.
         </p>
@@ -72,7 +72,7 @@ const Services = () => {
                 displayOverlayContent={true}
                 overlayContent={
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent rounded-xl flex flex-col justify-end p-6">
-                    <h3 className="text-2xl font-bold text-white mb-3">
+                    <h3 className="text-2xl font-bold text-primary drop-shadow-lg mb-3">
                       {service.title}
                     </h3>
                     <div className="mb-4">

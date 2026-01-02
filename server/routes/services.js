@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 router.get('/', async (req, res) => {
   try {
     const services = await prisma.service.findMany({
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'asc' }
     });
     res.json(services);
   } catch (error) {
