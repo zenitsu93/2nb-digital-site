@@ -317,14 +317,18 @@ const AdminArticles = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="content">Contenu *</Label>
+                <Label htmlFor="content">Contenu * (Markdown supporté)</Label>
                 <Textarea
                   id="content"
                   required
-                  rows={6}
+                  rows={12}
                   value={formData.content}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                  placeholder="Vous pouvez utiliser le format Markdown pour formater votre contenu. Exemples :&#10;&#10;# Titre principal&#10;## Sous-titre&#10;**Texte en gras**&#10;*Texte en italique*&#10;- Liste à puces&#10;1. Liste numérotée&#10;[Lien](https://example.com)&#10;![Image](url)&#10;```code```"
                 />
+                <p className="text-xs text-gray-500 mt-2">
+                  💡 Le contenu supporte le format Markdown. Vous pouvez utiliser des titres, listes, liens, images, code, etc.
+                </p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>

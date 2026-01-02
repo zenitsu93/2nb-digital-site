@@ -3,6 +3,9 @@ import { useParams, Link, Navigate } from 'react-router';
 import CardBox from '../../components/shared/CardBox';
 import { Badge, Button } from 'flowbite-react';
 import { Icon } from '@iconify/react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
 import { articlesApi, Article } from '../../services/api/articles';
 
 // Données des articles - chargées depuis l'API
@@ -254,8 +257,35 @@ const ArticleDetail = () => {
                 </div>
               </div>
               <p className="text-lg text-dark/70 mb-4">{article.excerpt}</p>
-              <div className="prose max-w-none text-dark/70 whitespace-pre-wrap">
-                {article.content}
+              <div className="prose prose-lg max-w-none text-dark/70 
+                prose-headings:text-dark prose-headings:font-bold
+                prose-h1:text-3xl prose-h1:mb-4 prose-h1:mt-6
+                prose-h2:text-2xl prose-h2:mb-3 prose-h2:mt-5
+                prose-h3:text-xl prose-h3:mb-2 prose-h3:mt-4
+                prose-p:mb-4 prose-p:leading-relaxed
+                prose-strong:text-dark prose-strong:font-semibold
+                prose-em:text-dark/80
+                prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+                prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-4
+                prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-4
+                prose-li:mb-2
+                prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-dark/80
+                prose-code:text-primary prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
+                prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto
+                prose-img:rounded-lg prose-img:my-4 prose-img:max-w-full
+                prose-hr:border-gray-300 prose-hr:my-6
+                prose-table:w-full prose-table:border-collapse prose-table:my-4
+                prose-th:border prose-th:border-gray-300 prose-th:px-4 prose-th:py-2 prose-th:bg-gray-100 prose-th:font-semibold
+                prose-td:border prose-td:border-gray-300 prose-td:px-4 prose-td:py-2">
+                <ReactMarkdown 
+                  remarkPlugins={[remarkGfm, remarkBreaks]}
+                  components={{
+                    p: ({node, ...props}) => <p className="mb-4 leading-relaxed" {...props} />,
+                    br: () => <br className="mb-2" />,
+                  }}
+                >
+                  {article.content}
+                </ReactMarkdown>
               </div>
               <div className="flex flex-wrap gap-2 mt-8 pt-6 border-t border-gray-200">
                 {article.tags.map((tag, index) => (
