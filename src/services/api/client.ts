@@ -1,6 +1,4 @@
-// En production, utiliser des URLs relatives si VITE_API_URL n'est pas défini
-// En développement, utiliser localhost
-const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.MODE === 'production' ? '/api' : 'http://localhost:3001/api');
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 class ApiClient {
   private baseUrl: string;

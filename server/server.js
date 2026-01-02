@@ -60,21 +60,7 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'API is running' });
 });
 
-// Servir les fichiers statiques du frontend en production (après toutes les routes API)
-if (process.env.NODE_ENV === 'production') {
-  const frontendDist = join(__dirname, '..', 'dist');
-  if (fs.existsSync(frontendDist)) {
-    // Servir les fichiers statiques
-    app.use(express.static(frontendDist));
-    
-    // Pour toutes les routes non-API, servir index.html (SPA routing)
-    app.get('*', (req, res) => {
-      res.sendFile(join(frontendDist, 'index.html'));
-    });
-  }
-}
-
-// Error handling middleware (doit être le dernier)
+// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong!' });

@@ -58,7 +58,7 @@ const Contact = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <div className="mb-2 block">
-                    <Label htmlFor="firstName">Prénom</Label>
+                    <Label htmlFor="firstName" value="Prénom" />
                   </div>
                   <TextInput
                     id="firstName"
@@ -72,7 +72,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <div className="mb-2 block">
-                    <Label htmlFor="lastName">Nom</Label>
+                    <Label htmlFor="lastName" value="Nom" />
                   </div>
                   <TextInput
                     id="lastName"
@@ -89,7 +89,7 @@ const Contact = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <div className="mb-2 block">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email" value="Email" />
                   </div>
                   <TextInput
                     id="email"
@@ -103,7 +103,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <div className="mb-2 block">
-                    <Label htmlFor="phone">Téléphone</Label>
+                    <Label htmlFor="phone" value="Téléphone" />
                   </div>
                   <TextInput
                     id="phone"
@@ -119,7 +119,7 @@ const Contact = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <div className="mb-2 block">
-                    <Label htmlFor="service">Service concerné</Label>
+                    <Label htmlFor="service" value="Service concerné" />
                   </div>
                   <Select
                     id="service"
@@ -138,7 +138,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <div className="mb-2 block">
-                    <Label htmlFor="subject">Sujet</Label>
+                    <Label htmlFor="subject" value="Sujet" />
                   </div>
                   <TextInput
                     id="subject"
@@ -154,7 +154,7 @@ const Contact = () => {
 
               <div>
                 <div className="mb-2 block">
-                  <Label htmlFor="message">Message</Label>
+                  <Label htmlFor="message" value="Message" />
                 </div>
                 <Textarea
                   id="message"

@@ -58,14 +58,14 @@ export const useConfirmDialog = () => {
       onConfirm: null,
       loading: false,
     }));
-  }, []);
+  });
 
   const setLoading = useCallback((loading: boolean) => {
     setDialog((prev) => ({
       ...prev,
       loading,
     }));
-  }, []);
+  });
 
   const handleConfirm = useCallback(() => {
     if (dialog.onConfirm) {
