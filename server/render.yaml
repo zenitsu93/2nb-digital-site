@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: 2nb-digital-api
+    env: node
+    buildCommand: npm install && npm run db:generate
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: 2nb-digital-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: FRONTEND_URL
+        sync: false
+
+databases:
+  - name: 2nb-digital-db
+    plan: starter
+    databaseName: 2nb_digital
+    user: 2nb_digital_user
