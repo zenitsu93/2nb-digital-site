@@ -15,11 +15,48 @@ const Contact = () => {
     message: '',
   });
 
+  const WHATSAPP_NUMBER = '22677534419'; // Numéro WhatsApp de 2NB Digital
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simuler l'envoi du formulaire
+    
+    // Construire le message WhatsApp formaté
+    const serviceLabels: { [key: string]: string } = {
+      developpement: 'Développement',
+      transformation: 'Transformation Digitale',
+      data: 'Data & IA',
+      marketing: 'Marketing Digital',
+      formation: 'Formation',
+      autre: 'Autre',
+    };
+
+    const serviceLabel = formData.service ? serviceLabels[formData.service] || formData.service : 'Non spécifié';
+    
+    const whatsappMessage = `Bonjour 2NB Digital,
+
+Je souhaite vous contacter concernant : ${formData.subject}
+
+*Informations de contact :*
+• Nom : ${formData.firstName} ${formData.lastName}
+• Email : ${formData.email}${formData.phone ? `\n• Téléphone : ${formData.phone}` : ''}
+• Service concerné : ${serviceLabel}
+
+*Message :*
+${formData.message}
+
+Merci de me recontacter.`;
+
+    // Encoder le message pour l'URL
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    
+    // Ouvrir WhatsApp avec le message pré-rempli
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+    
+    // Afficher la notification
     setShowToast(true);
     setTimeout(() => setShowToast(false), 5000);
+    
     // Réinitialiser le formulaire
     setFormData({
       firstName: '',
@@ -53,7 +90,13 @@ const Contact = () => {
         {/* Contact Form */}
         <div>
           <CardBox>
-            <h2 className="text-2xl font-bold text-dark mb-6">Envoyez-nous un message</h2>
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-dark mb-2">Envoyez-nous un message</h2>
+              <p className="text-sm text-dark/60 flex items-center gap-2">
+                <Icon icon="logos:whatsapp-icon" className="text-lg" />
+                Votre message sera envoyé via WhatsApp
+              </p>
+            </div>
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -169,8 +212,8 @@ const Contact = () => {
 
               <div className="flex gap-3">
                 <Button type="submit" color="primary" className="flex-1" size="lg">
-                  <Icon icon="solar:paper-plane-line-duotone" className="mr-2" height={20} />
-                  Envoyer le message
+                  <Icon icon="logos:whatsapp-icon" className="mr-2" height={20} />
+                  Envoyer via WhatsApp
                 </Button>
                 <Button
                   type="button"
@@ -201,11 +244,11 @@ const Contact = () => {
           <div className="bg-white dark:bg-darkgray rounded-lg shadow-lg border border-gray-200 p-4 min-w-[300px]">
             <div className="flex items-start gap-3">
               <div className="p-1 bg-success/10 rounded-full">
-                <Icon icon="solar:check-circle-line-duotone" className="text-success text-xl" />
+                <Icon icon="logos:whatsapp-icon" className="text-success text-xl" />
               </div>
               <div className="flex-1">
-                <p className="font-semibold text-dark mb-1">Message envoyé !</p>
-                <p className="text-sm text-dark/70">Nous vous répondrons dans les plus brefs délais.</p>
+                <p className="font-semibold text-dark mb-1">WhatsApp ouvert !</p>
+                <p className="text-sm text-dark/70">Votre message est prêt à être envoyé sur WhatsApp.</p>
               </div>
               <button
                 onClick={() => setShowToast(false)}
