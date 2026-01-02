@@ -3,6 +3,7 @@ import { Button, Modal, TextInput, Textarea, Label, Badge } from 'flowbite-react
 import { Icon } from '@iconify/react';
 import { servicesApi, Service } from '../../../services/api/services';
 import { uploadApi } from '../../../services/api/upload';
+import { getUploadUrl } from '../../../utils/getUploadUrl';
 import Toast from '../../../components/shared/Toast';
 import { useToast } from '../../../hooks/useToast';
 import ConfirmDialog from '../../../components/shared/ConfirmDialog';
@@ -42,8 +43,7 @@ const AdminServices = () => {
       setUploadingImage(true);
       const result = await uploadApi.uploadFile(file);
       // Construire l'URL complète
-      const apiBaseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001';
-      const fullUrl = `${apiBaseUrl}${result.url}`;
+      const fullUrl = getUploadUrl(result.url);
       setFormData({ ...formData, image: fullUrl });
       showToast('Image uploadée avec succès', 'success');
     } catch (error: any) {
@@ -112,7 +112,7 @@ const AdminServices = () => {
       const serviceData = {
         title: formData.title,
         description: formData.description,
-        image: formData.image || null,
+        image: formData.image || undefined,
         features: featuresArray,
       };
 

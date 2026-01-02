@@ -243,7 +243,7 @@ const ArticleDetail = () => {
                   {new Date(article.date).toLocaleDateString('fr-FR')}
                 </span>
                 <span className="text-sm text-dark/50">•</span>
-                <span className="text-sm text-dark/50">{article.readTime} de lecture</span>
+                <span className="text-sm text-dark/50">5 min de lecture</span>
               </div>
               <h1 className="text-3xl font-bold text-dark mb-4">{article.title}</h1>
               <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-200">

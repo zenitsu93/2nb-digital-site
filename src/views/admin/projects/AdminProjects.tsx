@@ -3,6 +3,7 @@ import { Button, Modal, TextInput, Textarea, Label, Badge, Select } from 'flowbi
 import { Icon } from '@iconify/react';
 import { projectsApi, Project } from '../../../services/api/projects';
 import { uploadApi } from '../../../services/api/upload';
+import { getUploadUrl } from '../../../utils/getUploadUrl';
 import Toast from '../../../components/shared/Toast';
 import { useToast } from '../../../hooks/useToast';
 import ConfirmDialog from '../../../components/shared/ConfirmDialog';
@@ -47,8 +48,7 @@ const AdminProjects = () => {
       setUploadingImage(true);
       const result = await uploadApi.uploadFile(file);
       // Construire l'URL complète
-      const apiBaseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001';
-      const fullUrl = `${apiBaseUrl}${result.url}`;
+      const fullUrl = getUploadUrl(result.url);
       setFormData({ ...formData, image: fullUrl });
     } catch (error: any) {
       console.error('Error uploading image:', error);
@@ -75,8 +75,7 @@ const AdminProjects = () => {
       setUploadingVideo(true);
       const result = await uploadApi.uploadFile(file);
       // Construire l'URL complète
-      const apiBaseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001';
-      const fullUrl = `${apiBaseUrl}${result.url}`;
+      const fullUrl = getUploadUrl(result.url);
       setFormData({ ...formData, video: fullUrl });
     } catch (error: any) {
       console.error('Error uploading video:', error);

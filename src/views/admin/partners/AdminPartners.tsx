@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Button, Modal, TextInput, Label, Badge } from 'flowbite-react';
+import { Button, Modal, TextInput, Label } from 'flowbite-react';
 import { Icon } from '@iconify/react';
 import { partnersApi, Partner } from '../../../services/api/partners';
 import { uploadApi } from '../../../services/api/upload';
+import { getUploadUrl } from '../../../utils/getUploadUrl';
 import Toast from '../../../components/shared/Toast';
 import { useToast } from '../../../hooks/useToast';
 import ConfirmDialog from '../../../components/shared/ConfirmDialog';
@@ -79,8 +80,7 @@ const AdminPartners = () => {
     try {
       setUploadingLogo(true);
       const result = await uploadApi.uploadFile(file);
-      const apiBaseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001';
-      const fullUrl = `${apiBaseUrl}${result.url}`;
+      const fullUrl = getUploadUrl(result.url);
       setFormData({ ...formData, logo: fullUrl });
       showToast('Logo uploadé avec succès', 'success');
     } catch (error: any) {

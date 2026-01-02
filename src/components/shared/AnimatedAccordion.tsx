@@ -1,5 +1,5 @@
 import * as Accordion from '@radix-ui/react-accordion';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -53,8 +53,8 @@ const AnimatedAccordion = ({
       type={type}
       collapsible={collapsible}
       className="w-full"
-      value={openValue}
-      onValueChange={(value) => setOpenValue(value)}
+      value={openValue as any}
+      onValueChange={(value: string | string[]) => setOpenValue(value)}
     >
       {items.map((item, index) => {
         const itemValue = `item-${index + 1}`;

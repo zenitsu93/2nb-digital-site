@@ -3,6 +3,7 @@ import { Button, Modal, TextInput, Textarea, Label, Rating, RatingStar } from 'f
 import { Icon } from '@iconify/react';
 import { testimonialsApi, Testimonial } from '../../../services/api/testimonials';
 import { uploadApi } from '../../../services/api/upload';
+import { getUploadUrl } from '../../../utils/getUploadUrl';
 import Toast from '../../../components/shared/Toast';
 import { useToast } from '../../../hooks/useToast';
 import ConfirmDialog from '../../../components/shared/ConfirmDialog';
@@ -42,8 +43,7 @@ const AdminTestimonials = () => {
     try {
       setUploadingImage(true);
       const result = await uploadApi.uploadFile(file);
-      const apiBaseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001';
-      const fullUrl = `${apiBaseUrl}${result.url}`;
+      const fullUrl = getUploadUrl(result.url);
       setFormData({ ...formData, image: fullUrl });
       showToast('Image uploadée avec succès', 'success');
     } catch (error: any) {
@@ -113,7 +113,7 @@ const AdminTestimonials = () => {
         name: formData.name,
         role: formData.role,
         company: formData.company,
-        image: formData.image || null,
+        image: formData.image || undefined,
         content: formData.content,
         rating: formData.rating,
       };
