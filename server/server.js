@@ -24,25 +24,11 @@ const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
-// Gérer plusieurs origines CORS (pour développement et production)
-const allowedOrigins = FRONTEND_URL.split(',').map(url => url.trim());
-const corsOptions = {
-  origin: (origin, callback) => {
-    // Autoriser les requêtes sans origine (mobile apps, Postman, etc.)
-    if (!origin) return callback(null, true);
-    
-    // Vérifier si l'origine est autorisée
-    if (allowedOrigins.includes(origin) || allowedOrigins.some(allowed => origin?.includes(allowed))) {
-      callback(null, true);
-    } else {
-      callback(null, true); // En production, vous pouvez restreindre : callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
-};
-
 // Middleware
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: FRONTEND_URL,
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
