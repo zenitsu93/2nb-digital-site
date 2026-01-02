@@ -10,6 +10,7 @@ const Services = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedFeatures, setExpandedFeatures] = useState<Set<number>>(new Set());
+  const [expandedDescriptions, setExpandedDescriptions] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -74,9 +75,30 @@ const Services = () => {
                     <h3 className="text-2xl font-bold text-white mb-3">
                       {service.title}
                     </h3>
-                    <p className="text-sm text-white/90 mb-4 line-clamp-2">
-                      {service.description}
-                    </p>
+                    <div className="mb-4">
+                      <p className={`text-sm text-white/90 ${expandedDescriptions.has(service.id) ? '' : 'line-clamp-2'}`}>
+                        {service.description}
+                      </p>
+                      {service.description && service.description.length > 100 && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (expandedDescriptions.has(service.id)) {
+                              setExpandedDescriptions(prev => {
+                                const newSet = new Set(prev);
+                                newSet.delete(service.id);
+                                return newSet;
+                              });
+                            } else {
+                              setExpandedDescriptions(prev => new Set(prev).add(service.id));
+                            }
+                          }}
+                          className="text-xs text-white/80 hover:text-white mt-2 font-medium underline transition-colors"
+                        >
+                          {expandedDescriptions.has(service.id) ? 'Voir moins' : 'Voir plus'}
+                        </button>
+                      )}
+                    </div>
                     
                     {/* Features */}
                     {service.features && service.features.length > 0 && (
