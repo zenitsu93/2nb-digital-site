@@ -51,7 +51,7 @@ const Header = () => {
           />
         </MobileNavHeader>
 
-        <MobileNavMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)}>
+        <MobileNavMenu isOpen={isMobileMenuOpen}>
           {navItems.map((item, idx) => {
             const isActive = location.pathname === item.href;
             return (

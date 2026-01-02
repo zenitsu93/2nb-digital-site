@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import { useEffect, useState, useRef } from 'react';
 import CardBox from '../../components/shared/CardBox';
-import { Badge, Card, Button } from 'flowbite-react';
+import { Card } from 'flowbite-react';
 import { Icon } from '@iconify/react';
 import Testimonials from '../../components/entreprise/Testimonials';
 import AnimatedAccordion from '../../components/shared/AnimatedAccordion';

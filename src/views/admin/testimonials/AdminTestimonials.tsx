@@ -113,7 +113,7 @@ const AdminTestimonials = () => {
         name: formData.name,
         role: formData.role,
         company: formData.company,
-        image: formData.image || null,
+        image: formData.image || undefined,
         content: formData.content,
         rating: formData.rating,
       };

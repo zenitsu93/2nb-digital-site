@@ -130,9 +130,9 @@ export function SmoothCursor({
   onCursorLeave,
   disabled = false,
 }: SmoothCursorProps) {
-  const [isMoving, setIsMoving] = useState(false);
+  const [_isMoving, setIsMoving] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-  const [isClicking, setIsClicking] = useState(false);
+  const [_isClicking, setIsClicking] = useState(false);
   const [trail, setTrail] = useState<Position[]>([]);
 
   const lastMousePos = useRef<Position>({ x: 0, y: 0 });

@@ -196,9 +196,9 @@ npm run db:studio
 - Le frontend tourne sur `http://localhost:5173`
 - Assurez-vous que PostgreSQL est en cours d'exécution avant de lancer les migrations
 
-## 🚀 Déploiement sur Vercel
+## 🚀 Déploiement
 
-### Déploiement du Frontend
+### Déploiement du Frontend sur Vercel
 
 1. **Installer Vercel CLI** (optionnel, pour déploiement en ligne de commande) :
 ```bash
@@ -216,13 +216,29 @@ npm i -g vercel
    ```
    VITE_API_URL=https://votre-backend-url.com/api
    ```
-   Remplacez `https://votre-backend-url.com/api` par l'URL de votre backend déployé.
+   **⚠️ Important** : Vous devez d'abord déployer le backend pour obtenir cette URL. Voir le guide ci-dessous.
 
 4. **Déploiement via CLI** (alternative) :
 ```bash
 vercel
 ```
 Suivez les instructions à l'écran.
+
+### Déploiement du Backend
+
+**📖 Guide complet** : Consultez le fichier [`DEPLOYMENT.md`](./DEPLOYMENT.md) pour les instructions détaillées.
+
+**Options recommandées** :
+- **Railway** (⭐ Le plus simple) - [railway.app](https://railway.app)
+- **Render** (Gratuit) - [render.com](https://render.com)
+
+**Où trouver l'URL du backend ?**
+
+Une fois votre backend déployé sur Railway ou Render :
+1. Allez dans le dashboard de votre service (Railway ou Render)
+2. L'URL de votre backend sera affichée (ex: `https://votre-backend.railway.app`)
+3. **L'URL complète de l'API sera** : `https://votre-backend.railway.app/api`
+4. Utilisez cette URL pour la variable `VITE_API_URL` dans Vercel
 
 ### Configuration
 
@@ -233,7 +249,7 @@ Le fichier `vercel.json` est déjà configuré pour :
 
 ### Notes importantes
 
-- **Backend séparé** : Le backend dans le dossier `server` doit être déployé séparément (sur Vercel avec des fonctions serverless, ou sur un autre service comme Railway, Render, etc.)
+- **Backend séparé** : Le backend dans le dossier `server` doit être déployé séparément
 - **Variables d'environnement** : N'oubliez pas de configurer `VITE_API_URL` dans les paramètres Vercel
 - **Base de données** : Assurez-vous que votre backend a accès à une base de données PostgreSQL en production
 
