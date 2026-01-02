@@ -9,6 +9,7 @@ import { servicesApi, Service } from '../../services/api/services';
 const Services = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedFeatures, setExpandedFeatures] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -81,13 +82,22 @@ const Services = () => {
                     {service.features && service.features.length > 0 && (
                       <div className="mb-4">
                         <div className="flex flex-wrap gap-2">
-                          {service.features.slice(0, 3).map((feature, index) => (
+                          {(expandedFeatures.has(service.id) 
+                            ? service.features 
+                            : service.features.slice(0, 3)
+                          ).map((feature, index) => (
                             <Badge key={index} className="text-xs bg-white/20 text-white border-white/30">
                               {feature}
                             </Badge>
                           ))}
-                          {service.features.length > 3 && (
-                            <Badge className="text-xs bg-white/20 text-white border-white/30">
+                          {service.features.length > 3 && !expandedFeatures.has(service.id) && (
+                            <Badge 
+                              className="text-xs bg-white/20 text-white border-white/30 cursor-pointer hover:bg-white/30 transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setExpandedFeatures(prev => new Set(prev).add(service.id));
+                              }}
+                            >
                               +{service.features.length - 3} autres
                             </Badge>
                           )}

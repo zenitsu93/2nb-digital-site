@@ -325,8 +325,9 @@ const Accueil = () => {
               startOnVisible={true}
             />
             <p className="text-lg text-dark/70 mb-8">
-              2NB Digital accompagne les entreprises au Burkina Faso et en Afrique dans leur transition vers le numérique.
-              De l'ingénierie logicielle à l'intelligence artificielle, nous offrons des solutions complètes et innovantes.
+              Nés de l'ambition commune d'ingénieurs Centraliens, nous avons fondé 2NB Digital avec une conviction forte : mettre notre expertise pluridisciplinaire au service de votre réussite dans un monde en constante évolution technologique.
+              <br />
+              <span className="font-bold">La transformation digitale. À votre service. À tout moment.</span>
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link to="/services">
