@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 import { Button, TextInput, Card } from 'flowbite-react';
 import { Icon } from '@iconify/react';
+import { useAuth } from '../../contexts/AuthContext';
 import FullLogo from '../../layouts/full/shared/logo/FullLogo';
 
 const Signup = () => {
@@ -11,6 +12,8 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { register } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,10 +33,8 @@ const Signup = () => {
     setIsLoading(true);
 
     try {
-      // TODO: Implémenter l'API d'inscription côté backend
-      setError('La création de compte n\'est pas encore disponible. Contactez un administrateur.');
-      // await register(username, password, email || undefined);
-      // navigate('/admin');
+      await register(username, password, email || undefined);
+      navigate('/admin');
     } catch (err: any) {
       setError(err.response?.data?.error || err.message || 'Erreur lors de la création du compte');
     } finally {

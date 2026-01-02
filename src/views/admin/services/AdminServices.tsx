@@ -112,7 +112,7 @@ const AdminServices = () => {
       const serviceData = {
         title: formData.title,
         description: formData.description,
-        image: formData.image || undefined,
+        image: formData.image || null,
         features: featuresArray,
       };
 

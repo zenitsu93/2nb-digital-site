@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CardBox from '../shared/CardBox';
-import { Rating, RatingStar } from 'flowbite-react';
+import { Rating, RatingStar, Button } from 'flowbite-react';
 import { Icon } from '@iconify/react';
 import { testimonialsApi, Testimonial } from '../../services/api/testimonials';
 

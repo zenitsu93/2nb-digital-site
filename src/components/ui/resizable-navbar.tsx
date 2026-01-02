@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect, useRef, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router";
 import { Icon } from "@iconify/react";
@@ -177,10 +177,11 @@ export const MobileNavToggle = ({ isOpen, onClick }: MobileNavToggleProps) => {
 // Mobile Nav Menu
 interface MobileNavMenuProps {
   isOpen: boolean;
+  onClose: () => void;
   children: ReactNode;
 }
 
-export const MobileNavMenu = ({ isOpen, children }: MobileNavMenuProps) => {
+export const MobileNavMenu = ({ isOpen, onClose, children }: MobileNavMenuProps) => {
   return (
     <AnimatePresence>
       {isOpen && (
