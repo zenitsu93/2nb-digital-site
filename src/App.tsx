@@ -16,7 +16,7 @@ function App() {
         <AuthProvider>
           <SmoothCursor
             color="#D4AF37"
-            size={20}
+            size={12}
             springConfig={{
               damping: 100,
               stiffness: 2000,
