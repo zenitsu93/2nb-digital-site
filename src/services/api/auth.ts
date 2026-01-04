@@ -16,9 +16,18 @@ export interface VerifyResponse {
   admin: Admin;
 }
 
+export interface RegisterResponse {
+  token: string;
+  admin: Admin;
+}
+
 export const authApi = {
   login: async (username: string, password: string): Promise<LoginResponse> => {
     return apiClient.post<LoginResponse>('/auth/login', { username, password });
+  },
+
+  register: async (username: string, password: string, email?: string): Promise<RegisterResponse> => {
+    return apiClient.post<RegisterResponse>('/auth/register', { username, password, email });
   },
 
   verify: async (token: string): Promise<VerifyResponse> => {

@@ -56,7 +56,7 @@ const AdminLayout: FC = () => {
               </div>
               <Link to="/" className="block">
                 <SidebarItem
-                  icon={() => <Icon icon="solar:home-2-line-duotone" size={20} />}
+                  icon={() => <Icon icon="solar:home-2-line-duotone" className="w-5 h-5" />}
                 >
                   Retour au site
                 </SidebarItem>
@@ -68,7 +68,7 @@ const AdminLayout: FC = () => {
                   className="w-full"
                   onClick={handleLogout}
                 >
-                  <Icon icon="solar:logout-2-line-duotone" className="mr-2" size={18} />
+                  <Icon icon="solar:logout-2-line-duotone" className="mr-2 w-4 h-4" />
                   Déconnexion
                 </Button>
               </div>

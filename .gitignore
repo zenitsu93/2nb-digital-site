@@ -12,6 +12,16 @@ dist
 dist-ssr
 *.local
 
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+server/.env
+server/.env.local
+server/.env.production
+server/.env.development
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -23,3 +33,8 @@ dist-ssr
 *.sln
 *.sw?
 
+# Deployment
+*.pem
+*.key
+id_rsa
+id_rsa.pub

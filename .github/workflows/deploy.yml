@@ -1,0 +1,109 @@
+name: Deploy to O2Switch
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            server/package-lock.json
+      
+      - name: Install frontend dependencies
+        run: npm ci
+      
+      - name: Build frontend
+        run: npm run build
+      
+      - name: Install backend dependencies
+        working-directory: ./server
+        run: npm ci
+      
+      - name: Generate Prisma client
+        working-directory: ./server
+        run: npm run db:generate
+      
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.O2SWITCH_SSH_KEY }}
+      
+      - name: Add server to known hosts
+        run: |
+          ssh-keyscan -H ${{ secrets.O2SWITCH_HOST }} >> ~/.ssh/known_hosts
+      
+      - name: Create directories on server
+        env:
+          O2SWITCH_USER: ${{ secrets.O2SWITCH_USER }}
+          O2SWITCH_HOST: ${{ secrets.O2SWITCH_HOST }}
+          O2SWITCH_DEPLOY_PATH: ${{ secrets.O2SWITCH_DEPLOY_PATH }}
+        run: |
+          ssh $O2SWITCH_USER@$O2SWITCH_HOST "mkdir -p $O2SWITCH_DEPLOY_PATH/server/public/uploads $O2SWITCH_DEPLOY_PATH/dist"
+      
+      - name: Deploy to O2Switch
+        env:
+          O2SWITCH_USER: ${{ secrets.O2SWITCH_USER }}
+          O2SWITCH_HOST: ${{ secrets.O2SWITCH_HOST }}
+          O2SWITCH_DEPLOY_PATH: ${{ secrets.O2SWITCH_DEPLOY_PATH }}
+        run: |
+          # Synchroniser le frontend
+          echo "📦 Syncing frontend..."
+          rsync -avz --delete dist/ $O2SWITCH_USER@$O2SWITCH_HOST:$O2SWITCH_DEPLOY_PATH/dist/
+          
+          # Synchroniser le backend
+          echo "📦 Syncing backend..."
+          rsync -avz --exclude 'node_modules' --exclude '.env' --exclude '.env.production' server/ $O2SWITCH_USER@$O2SWITCH_HOST:$O2SWITCH_DEPLOY_PATH/server/
+          
+          # Synchroniser les fichiers de configuration
+          echo "📦 Syncing configuration files..."
+          rsync -avz package.json package-lock.json $O2SWITCH_USER@$O2SWITCH_HOST:$O2SWITCH_DEPLOY_PATH/
+          
+          # Synchroniser ecosystem.config.js si présent
+          if [ -f "ecosystem.config.js" ]; then
+            rsync -avz ecosystem.config.js $O2SWITCH_USER@$O2SWITCH_HOST:$O2SWITCH_DEPLOY_PATH/
+          fi
+          
+          # Installer et déployer sur le serveur
+          echo "📥 Installing and deploying on server..."
+          ssh $O2SWITCH_USER@$O2SWITCH_HOST << 'ENDSSH'
+          set -e
+          cd $O2SWITCH_DEPLOY_PATH/server
+          
+          echo "📥 Installing backend dependencies..."
+          npm ci --production
+          
+          echo "🔧 Generating Prisma client..."
+          npm run db:generate
+          
+          echo "🗄️ Running database migrations..."
+          npm run db:migrate:deploy || echo "⚠️ Migration failed, check manually"
+          
+          # Redémarrer avec PM2 si disponible
+          if command -v pm2 &> /dev/null; then
+            echo "🔄 Restarting application with PM2..."
+            cd ..
+            pm2 restart ecosystem.config.js --update-env || pm2 start ecosystem.config.js
+          else
+            echo "⚠️ PM2 not found, please restart manually"
+          fi
+          ENDSSH
+      
+      - name: Deployment success
+        run: |
+          echo "✅ Deployment completed successfully!"
+          echo "🌐 URL: ${{ secrets.O2SWITCH_URL }}"

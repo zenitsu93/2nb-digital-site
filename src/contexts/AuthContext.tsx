@@ -7,6 +7,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (username: string, password: string) => Promise<void>;
+  register: (username: string, password: string, email?: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -72,6 +73,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  const register = async (username: string, password: string, email?: string) => {
+    try {
+      const response = await authApi.register(username, password, email);
+      localStorage.setItem('auth_token', response.token);
+      setToken(response.token);
+      setAdmin(response.admin);
+    } catch (error) {
+      console.error('Register error:', error);
+      throw error;
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('auth_token');
     setToken(null);
@@ -84,6 +97,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     isAuthenticated: !!token && !!admin,
     isLoading,
     login,
+    register,
     logout,
   };
 

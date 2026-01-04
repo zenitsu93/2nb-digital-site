@@ -101,7 +101,7 @@ Merci de me recontacter.`;
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <div className="mb-2 block">
-                    <Label htmlFor="firstName" value="Prénom" />
+                    <Label htmlFor="firstName">Prénom</Label>
                   </div>
                   <TextInput
                     id="firstName"
@@ -115,7 +115,7 @@ Merci de me recontacter.`;
                 </div>
                 <div>
                   <div className="mb-2 block">
-                    <Label htmlFor="lastName" value="Nom" />
+                    <Label htmlFor="lastName">Nom</Label>
                   </div>
                   <TextInput
                     id="lastName"
@@ -132,7 +132,7 @@ Merci de me recontacter.`;
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <div className="mb-2 block">
-                    <Label htmlFor="email" value="Email" />
+                    <Label htmlFor="email">Email</Label>
                   </div>
                   <TextInput
                     id="email"
@@ -146,7 +146,7 @@ Merci de me recontacter.`;
                 </div>
                 <div>
                   <div className="mb-2 block">
-                    <Label htmlFor="phone" value="Téléphone" />
+                    <Label htmlFor="phone">Téléphone</Label>
                   </div>
                   <TextInput
                     id="phone"
@@ -162,7 +162,7 @@ Merci de me recontacter.`;
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <div className="mb-2 block">
-                    <Label htmlFor="service" value="Service concerné" />
+                    <Label htmlFor="service">Service concerné</Label>
                   </div>
                   <Select
                     id="service"
@@ -181,7 +181,7 @@ Merci de me recontacter.`;
                 </div>
                 <div>
                   <div className="mb-2 block">
-                    <Label htmlFor="subject" value="Sujet" />
+                    <Label htmlFor="subject">Sujet</Label>
                   </div>
                   <TextInput
                     id="subject"
@@ -197,7 +197,7 @@ Merci de me recontacter.`;
 
               <div>
                 <div className="mb-2 block">
-                  <Label htmlFor="message" value="Message" />
+                  <Label htmlFor="message">Message</Label>
                 </div>
                 <Textarea
                   id="message"
