@@ -7,7 +7,7 @@
 set -e  # Arrêter en cas d'erreur
 
 # Configuration
-PROJECT_DIR="/home/cire1827/2nb-digital-site"
+PROJECT_DIR="/home/cire1827/site-2nbdigital"
 SERVER_DIR="$PROJECT_DIR/server"
 
 echo "🚀 Démarrage du déploiement automatique..."

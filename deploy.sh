@@ -4,7 +4,7 @@
 # Modifiez ces variables selon votre configuration O2Switch
 O2SWITCH_USER="${O2SWITCH_USER:-votre_utilisateur}"
 O2SWITCH_HOST="${O2SWITCH_HOST:-votre_serveur.o2switch.net}"
-O2SWITCH_DEPLOY_PATH="${O2SWITCH_DEPLOY_PATH:-/home/votre_utilisateur/2nb-digital-site}"
+O2SWITCH_DEPLOY_PATH="${O2SWITCH_DEPLOY_PATH:-/home/votre_utilisateur/site-2nbdigital}"
 O2SWITCH_URL="${O2SWITCH_URL:-https://votre-domaine.com}"
 
 echo "🚀 Déploiement sur O2Switch..."

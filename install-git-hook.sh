@@ -5,7 +5,7 @@
 
 set -e
 
-PROJECT_DIR="/home/cire1827/2nb-digital-site"
+PROJECT_DIR="/home/cire1827/site-2nbdigital"
 HOOK_FILE="$PROJECT_DIR/.git/hooks/post-receive"
 DEPLOY_SCRIPT="$PROJECT_DIR/deploy-hook.sh"
 
@@ -25,7 +25,7 @@ mkdir -p "$PROJECT_DIR/.git/hooks"
 cat > "$HOOK_FILE" << 'HOOK_EOF'
 #!/bin/bash
 # Hook Git post-receive pour déploiement automatique O2Switch
-cd /home/cire1827/2nb-digital-site
+cd /home/cire1827/site-2nbdigital
 bash deploy-hook.sh
 HOOK_EOF
 

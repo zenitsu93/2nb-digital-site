@@ -5,7 +5,7 @@
 
 set -e
 
-PROJECT_DIR="/home/cire1827/2nb-digital-site"
+PROJECT_DIR="/home/cire1827/site-2nbdigital"
 SERVER_DIR="$PROJECT_DIR/server"
 PUBLIC_HTML_DIR="${PUBLIC_HTML_DIR:-$HOME/public_html}"
 

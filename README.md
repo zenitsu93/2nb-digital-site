@@ -61,7 +61,7 @@ npm run create-default-admin
 ## 📁 Structure du projet
 
 ```
-2nb-digital-site/
+site-2nbdigital/
 ├── src/                    # Code source frontend
 │   ├── layouts/           # Layouts (Entreprise, Admin)
 │   ├── views/             # Pages du site
