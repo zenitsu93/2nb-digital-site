@@ -1,7 +1,0 @@
-# Proxy TOUT vers Node.js (frontend + API)
-# Ce fichier doit être placé dans le dossier public_html sur O2Switch
-<IfModule mod_proxy.c>
-    ProxyPreserveHost On
-    ProxyPass / http://localhost:3001/
-    ProxyPassReverse / http://localhost:3001/
-</IfModule>

@@ -1,19 +1,6 @@
-# 🚀 Guide Complet de Déploiement sur O2Switch
+# 🚀 Guide de Déploiement sur O2Switch avec cPanel
 
-Guide étape par étape pour déployer votre site Node.js + PostgreSQL sur O2Switch et le rendre accessible sur **2nbdigital.com**.
-
----
-
-## 🔄 Workflow de Synchronisation
-
-Ce guide utilise un **workflow Git** pour synchroniser vos modifications :
-
-1. **Modifications locales** : Vous modifiez le code sur votre machine locale
-2. **Push vers Git** : Vous commitez et poussez vos changements vers le repository
-3. **Synchronisation serveur** : Sur le serveur, vous faites `git pull` pour récupérer les modifications
-4. **Déploiement** : Rebuild et redémarrage de l'application
-
-**Pour chaque modification** : Suivez l'**ÉTAPE 8 : Synchronisation des Modifications** qui détaille ce processus.
+Guide étape par étape pour déployer votre site Node.js + PostgreSQL sur O2Switch en utilisant l'outil **Setup Node.js App** de cPanel.
 
 ---
 
@@ -35,116 +22,53 @@ Ce guide utilise un **workflow Git** pour synchroniser vos modifications :
 
 ---
 
-## 🔧 ÉTAPE 1 : Préparation Locale et Workflow Git
+## 🔧 ÉTAPE 1 : Clonage du Projet sur le Serveur
 
-### 1.1 Vérifier que le Projet est dans Git
-
-Assurez-vous que votre projet est bien versionné avec Git et que vous avez un repository distant (GitHub, GitLab, etc.).
+### 1.1 Connexion SSH
 
 ```bash
-# Dans le dossier du projet
-cd C:\Users\asus\Documents\site-2nbdigital
-
-# Vérifier le statut Git
-git status
-
-# Vérifier le remote
-git remote -v
-```
-
-### 1.2 Workflow de Synchronisation
-
-**Quand vous modifiez le code localement** :
-
-1. **Faire vos modifications** dans le projet
-2. **Tester localement** (optionnel) :
-   ```bash
-   npm install
-   npm run build
-   ```
-3. **Commiter et pousser** :
-   ```bash
-   git add .
-   git commit -m "Description de vos modifications"
-   git push origin main  # ou master
-   ```
-4. **Synchroniser sur le serveur** (voir ÉTAPE 8 pour la procédure complète)
-
-### 1.3 Vérifier les Fichiers de Configuration
-
-Assurez-vous que les fichiers suivants existent :
-- ✅ `ecosystem.config.cjs` (configuration PM2)
-- ✅ `server/env.o2switch.example` (template de configuration)
-- ✅ `.gitignore` (pour exclure `node_modules`, `.env`, etc.)
-
----
-
-## 🔧 ÉTAPE 2 : Installation de Node.js sur O2Switch
-
-### 2.1 Vérifier si Node.js est Installé
-
-```bash
-node --version
-npm --version
-```
-
-### 2.2 Installer Node.js via nvm (si nécessaire)
-
-```bash
-# Installer nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-
-# Recharger le shell
-source ~/.bashrc
-
-# Installer Node.js 20
-nvm install 20
-nvm use 20
-nvm alias default 20
-
-# Vérifier
-node --version  # Doit afficher v20.x.x
-npm --version
-```
-
-**Note**: O2Switch peut aussi avoir Node.js installé via cPanel. Vérifiez dans cPanel > Setup Node.js App.
-
----
-
-## 📦 ÉTAPE 3 : Installation des Dépendances
-
-### 3.1 Se Connecter et Aller dans le Dossier du Projet
-
-```bash
-# Se connecter au serveur
 ssh cire1827@109.234.167.45
+```
 
-# Aller dans le dossier du projet (déjà cloné)
+### 1.2 Cloner le Projet
+
+```bash
+# Aller dans le dossier home
+cd ~
+
+# Cloner le projet (remplacez par l'URL de votre repository)
+git clone https://votre-url-repo/site-2nbdigital.git site-2nbdigital
+
+# Aller dans le dossier du projet
 cd ~/site-2nbdigital
 ```
 
-### 3.2 Installer les Dépendances Frontend
+---
+
+## 📦 ÉTAPE 2 : Installation des Dépendances et Build
+
+### 2.1 Installer les Dépendances Frontend
 
 ```bash
 cd ~/site-2nbdigital
 npm install
 ```
 
-### 3.3 Build du Frontend
+### 2.2 Build du Frontend
 
 ```bash
 # Build avec l'URL de production
 VITE_API_URL=/api npm run build
 ```
 
-### 3.4 Installer les Dépendances Backend
+### 2.3 Installer les Dépendances Backend
 
 ```bash
 cd ~/site-2nbdigital/server
 npm install --production
 ```
 
-### 3.5 Générer le Client Prisma
+### 2.4 Générer le Client Prisma
 
 ```bash
 npm run db:generate
@@ -152,9 +76,9 @@ npm run db:generate
 
 ---
 
-## 🗄️ ÉTAPE 4 : Configuration de la Base de Données
+## 🗄️ ÉTAPE 3 : Configuration de la Base de Données
 
-### 4.1 Créer le Fichier .env
+### 3.1 Créer le Fichier .env
 
 ```bash
 cd ~/site-2nbdigital/server
@@ -163,7 +87,7 @@ cd ~/site-2nbdigital/server
 nano .env
 ```
 
-Collez ce contenu (les informations sont déjà correctes) :
+Collez ce contenu :
 
 ```env
 # Base de données PostgreSQL O2Switch
@@ -177,7 +101,7 @@ NODE_ENV=production
 FRONTEND_URL=https://2nbdigital.com
 
 # JWT Secret (générer un secret fort)
-JWT_SECRET=$(openssl rand -base64 32)
+JWT_SECRET=votre-secret-jwt-tres-securise-changez-moi
 JWT_EXPIRES_IN=7d
 ```
 
@@ -185,11 +109,11 @@ JWT_EXPIRES_IN=7d
 ```bash
 openssl rand -base64 32
 ```
-Copiez le résultat et remplacez `$(openssl rand -base64 32)` dans le fichier .env.
+Copiez le résultat et remplacez `votre-secret-jwt-tres-securise-changez-moi` dans le fichier .env.
 
 Sauvegarder : `Ctrl+O`, `Entrée`, `Ctrl+X`
 
-### 4.2 Vérifier la Connexion à la Base de Données
+### 3.2 Vérifier la Connexion à la Base de Données
 
 ```bash
 # Tester la connexion PostgreSQL
@@ -199,7 +123,7 @@ psql -h 127.0.0.1 -U cire1827_christian -d cire1827_2nbsite
 # Tapez \q pour quitter
 ```
 
-### 4.3 Appliquer les Migrations Prisma
+### 3.3 Appliquer les Migrations Prisma
 
 ```bash
 cd ~/site-2nbdigital/server
@@ -208,9 +132,7 @@ cd ~/site-2nbdigital/server
 npm run db:migrate:deploy
 ```
 
-**Note**: Cette commande applique toutes les migrations en attente. Si la base de données est déjà créée mais vide, cela créera toutes les tables.
-
-### 4.4 Créer l'Administrateur par Défaut
+### 3.4 Créer l'Administrateur par Défaut
 
 ```bash
 cd ~/site-2nbdigital/server
@@ -225,132 +147,87 @@ npm run create-default-admin
 
 ---
 
-## 🚀 ÉTAPE 5 : Configuration PM2 (Gestionnaire de Processus)
+## 🚀 ÉTAPE 4 : Configuration via cPanel "Setup Node.js App"
 
-### 5.1 Installer PM2 Globalement
+### 4.1 Accéder à l'Outil
 
-```bash
-npm install -g pm2
+1. Connectez-vous à votre **cPanel**
+2. Dans la section **Logiciels** ou **Applications**, trouvez **"Setup Node.js App"**
+3. Cliquez sur **"Create Application"**
+
+### 4.2 Configuration de l'Application
+
+Remplissez les champs suivants :
+
+- **Node.js Version** : Sélectionnez la version (recommandé : **20.x** ou la dernière version stable)
+
+- **Application Root** : 
+  ```
+  /home/cire1827/site-2nbdigital
+  ```
+
+- **Application URL** : 
+  ```
+  2nbdigital.com
+  ```
+  (ou sélectionnez dans la liste déroulante)
+
+- **Application Startup File** : 
+  ```
+  server/server.js
+  ```
+
+- **Application Mode** : `Production`
+
+### 4.3 Variables d'Environnement
+
+Dans la section **Environment Variables**, ajoutez les variables suivantes :
+
+```
+DATABASE_URL=postgresql://cire1827_christian:siriusj20023700@127.0.0.1:5432/cire1827_2nbsite?schema=public
+PORT=3001
+NODE_ENV=production
+FRONTEND_URL=https://2nbdigital.com
+JWT_SECRET=votre-secret-jwt-tres-securise
+JWT_EXPIRES_IN=7d
 ```
 
-### 5.2 Démarrer l'Application avec PM2
+**Note** : Remplacez `votre-secret-jwt-tres-securise` par le secret que vous avez généré à l'étape 3.1.
 
-**Important** : Si vous aviez déjà démarré l'application avec l'ancien nom de dossier, supprimez-la d'abord :
+### 4.4 Créer l'Application
 
-```bash
-# Arrêter et supprimer l'ancienne configuration
-pm2 delete 2nb-digital-api
-# OU si le nom est différent
-pm2 delete all
-```
+Cliquez sur **"Create"** ou **"Créer"**
 
-Puis démarrez avec la nouvelle configuration :
+### 4.5 Démarrer l'Application
 
-```bash
-cd ~/site-2nbdigital
-pm2 start ecosystem.config.cjs
-```
-
-### 5.3 Vérifier que l'Application Tourne
-
-```bash
-pm2 list
-pm2 logs 2nb-digital-api
-```
-
-Vous devriez voir :
-```
-🚀 Server running on http://localhost:3001
-```
-
-### 5.4 Configurer PM2 pour Démarrer au Redémarrage
-
-```bash
-pm2 startup
-# Suivez les instructions affichées
-pm2 save
-```
+Une fois l'application créée, cliquez sur le bouton **"Run NPM Install"** ou **"Installer les dépendances"** si disponible, puis sur **"Restart App"** ou **"Redémarrer l'application"**.
 
 ---
 
-## 🌐 ÉTAPE 6 : Configuration Apache (Proxy vers Node.js)
+## ✅ ÉTAPE 5 : Tests et Vérification
 
-### 6.1 Trouver le Dossier public_html
-
-```bash
-# Vérifier où se trouve public_html
-ls -la ~/public_html
-# OU
-ls -la ~/domains/2nbdigital.com/public_html
-```
-
-### 6.2 Créer le Fichier .htaccess
-
-```bash
-# Aller dans le dossier public_html
-cd ~/public_html
-# OU
-cd ~/domains/2nbdigital.com/public_html
-
-# Créer le fichier .htaccess
-nano .htaccess
-```
-
-Collez ce contenu :
-
-```apache
-# Proxy TOUT vers Node.js (frontend + API)
-<IfModule mod_proxy.c>
-    ProxyPreserveHost On
-    ProxyPass / http://localhost:3001/
-    ProxyPassReverse / http://localhost:3001/
-</IfModule>
-```
-
-Sauvegarder : `Ctrl+O`, `Entrée`, `Ctrl+X`
-
-### 6.3 Vérifier que mod_proxy est Activé
-
-Si vous obtenez une erreur 502 Bad Gateway, contactez le support O2Switch pour activer :
-- `mod_proxy`
-- `mod_proxy_http`
-
----
-
-## ✅ ÉTAPE 7 : Tests et Vérification
-
-### 7.1 Tester Node.js Directement
-
-```bash
-# Sur le serveur
-curl http://localhost:3001
-curl http://localhost:3001/api/health
-```
-
-Vous devriez voir des réponses JSON.
-
-### 7.2 Tester via le Domaine
-
-```bash
-# Depuis votre machine locale
-curl https://2nbdigital.com
-curl https://2nbdigital.com/api/health
-```
-
-### 7.3 Tester dans le Navigateur
+### 5.1 Tester dans le Navigateur
 
 1. Ouvrez `https://2nbdigital.com` dans votre navigateur
 2. Le site devrait s'afficher
 3. Testez l'API : `https://2nbdigital.com/api/health`
 4. Testez l'admin : `https://2nbdigital.com/admin/login`
 
+### 5.2 Vérifier les Logs dans cPanel
+
+Dans l'outil "Setup Node.js App", vous pouvez :
+- Voir les **logs de l'application**
+- Voir le **statut** (Running/Stopped)
+- **Redémarrer** l'application
+- **Arrêter/Démarrer** l'application
+
 ---
 
-## 🔄 ÉTAPE 8 : Synchronisation des Modifications (Workflow Quotidien)
+## 🔄 ÉTAPE 6 : Synchronisation des Modifications (Workflow Quotidien)
 
 Cette étape est à répéter **chaque fois que vous modifiez le code** et que vous voulez déployer les changements.
 
-### 8.1 Sur votre Machine Locale
+### 6.1 Sur votre Machine Locale
 
 ```bash
 # 1. Aller dans le dossier du projet
@@ -369,7 +246,7 @@ git commit -m "Description de vos modifications"
 git push origin main  # ou master, selon votre branche
 ```
 
-### 8.2 Sur le Serveur O2Switch
+### 6.2 Sur le Serveur O2Switch
 
 ```bash
 # 1. Se connecter au serveur
@@ -397,59 +274,22 @@ npm run db:generate
 # 8. Appliquer les migrations si nécessaire (si vous avez modifié le schéma)
 npm run db:migrate:deploy
 
-# 9. Redémarrer l'application
-cd ~/site-2nbdigital
-pm2 restart 2nb-digital-api
-
-# 10. Vérifier que tout fonctionne
-pm2 logs 2nb-digital-api --lines 50
+# 9. Redémarrer l'application via cPanel
+# Allez dans cPanel > Setup Node.js App > Cliquez sur "Restart App"
 ```
 
-### 8.3 Vérification Rapide
+**OU** redémarrer via SSH si l'outil cPanel le permet :
 
 ```bash
-# Vérifier que l'application tourne
-pm2 list
-
-# Tester l'API
-curl http://localhost:3001/api/health
-
-# Voir les logs en temps réel
-pm2 logs 2nb-digital-api
+# Vérifier si l'outil cPanel expose des commandes
+# Sinon, utilisez l'interface cPanel pour redémarrer
 ```
 
----
+### 6.3 Vérification Rapide
 
-## 📦 ÉTAPE 9 : Migration des Données (si nécessaire)
-
-Si vous avez des données existantes à migrer :
-
-### 9.1 Exporter les Données Locales
-
-```bash
-# Depuis votre machine locale
-pg_dump -h localhost -U votre_user -d votre_db > backup.sql
-```
-
-### 9.2 Transférer le Fichier sur O2Switch
-
-```bash
-# Via SCP
-scp backup.sql cire1827@109.234.167.45:~/backup.sql
-```
-
-### 9.3 Importer les Données
-
-```bash
-# Sur le serveur O2Switch
-psql -h 127.0.0.1 -U cire1827_christian -d cire1827_2nbsite < ~/backup.sql
-```
-
-**OU** via phpPgAdmin dans cPanel :
-1. Connectez-vous à cPanel
-2. Ouvrez phpPgAdmin
-3. Sélectionnez la base `cire1827_2nbsite`
-4. Importez le fichier SQL
+1. Vérifiez dans cPanel que l'application est en cours d'exécution
+2. Testez votre site dans le navigateur
+3. Vérifiez les logs dans cPanel si nécessaire
 
 ---
 
@@ -457,49 +297,44 @@ psql -h 127.0.0.1 -U cire1827_christian -d cire1827_2nbsite < ~/backup.sql
 
 ### Redémarrer l'Application
 
-```bash
-pm2 restart 2nb-digital-api
-```
+Via **cPanel** :
+- Allez dans **Setup Node.js App**
+- Cliquez sur **"Restart App"** pour votre application
 
 ### Voir les Logs
 
-```bash
-pm2 logs 2nb-digital-api
-pm2 logs 2nb-digital-api --lines 100  # 100 dernières lignes
-```
-
-### Arrêter l'Application
-
-```bash
-pm2 stop 2nb-digital-api
-```
+Via **cPanel** :
+- Allez dans **Setup Node.js App**
+- Cliquez sur **"View Logs"** ou **"Voir les logs"** pour votre application
 
 ### Appliquer de Nouvelles Migrations
 
 ```bash
 cd ~/site-2nbdigital/server
 npm run db:migrate:deploy
-pm2 restart 2nb-digital-api
 ```
+
+Puis redémarrez l'application via cPanel.
 
 ---
 
 ## 🐛 Dépannage
 
-### Erreur 502 Bad Gateway
+### L'Application ne Démarre pas
 
-1. **Vérifier que Node.js tourne** :
+1. **Vérifier les logs dans cPanel** :
+   - Allez dans **Setup Node.js App**
+   - Cliquez sur **"View Logs"** pour voir les erreurs
+
+2. **Vérifier le fichier .env** :
    ```bash
-   pm2 list
-   pm2 logs 2nb-digital-api
+   cat ~/site-2nbdigital/server/.env
    ```
 
-2. **Vérifier que le port 3001 est accessible** :
+3. **Vérifier que le fichier server.js existe** :
    ```bash
-   curl http://localhost:3001
+   ls -la ~/site-2nbdigital/server/server.js
    ```
-
-3. **Vérifier que mod_proxy est activé** (contactez le support O2Switch)
 
 ### Le Frontend ne s'Affiche pas
 
@@ -514,10 +349,7 @@ pm2 restart 2nb-digital-api
    VITE_API_URL=/api npm run build
    ```
 
-3. **Redémarrer l'application** :
-   ```bash
-   pm2 restart 2nb-digital-api
-   ```
+3. **Redémarrer l'application via cPanel**
 
 ### Erreur de Connexion à la Base de Données
 
@@ -531,67 +363,24 @@ pm2 restart 2nb-digital-api
    psql -h 127.0.0.1 -U cire1827_christian -d cire1827_2nbsite
    ```
 
-3. **Vérifier que PostgreSQL est en cours d'exécution** (contactez le support O2Switch si nécessaire)
+3. **Vérifier les variables d'environnement dans cPanel** :
+   - Allez dans **Setup Node.js App**
+   - Vérifiez que toutes les variables d'environnement sont correctement définies
 
-### Erreur "Environment variable not found: DATABASE_URL" lors de create-default-admin
-
-Si vous obtenez cette erreur lors de l'exécution de `npm run create-default-admin` :
+### Erreur "Environment variable not found: DATABASE_URL"
 
 1. **Vérifier que le fichier .env existe** :
    ```bash
    ls -la ~/site-2nbdigital/server/.env
    ```
 
-2. **Vérifier le contenu du fichier .env** :
-   ```bash
-   cat ~/site-2nbdigital/server/.env
-   ```
-   Assurez-vous que la ligne `DATABASE_URL=...` est présente et correcte.
+2. **Vérifier les variables d'environnement dans cPanel** :
+   - Allez dans **Setup Node.js App**
+   - Vérifiez que `DATABASE_URL` est bien définie dans les variables d'environnement
 
-3. **Vérifier que vous êtes dans le bon dossier** :
-   ```bash
-   cd ~/site-2nbdigital/server
-   npm run create-default-admin
-   ```
+3. **Si vous utilisez le fichier .env**, assurez-vous que l'application peut y accéder. Sinon, utilisez les variables d'environnement définies dans cPanel.
 
-4. **Si le problème persiste**, le script a été corrigé pour charger automatiquement le fichier .env. Assurez-vous d'avoir la dernière version :
-   ```bash
-   cd ~/site-2nbdigital
-   git pull origin main
-   cd server
-   npm run create-default-admin
-   ```
-
-### Erreur "Cannot find module '/home/cire1827/2nb-digital-site/server/server.js'"
-
-Si vous voyez cette erreur dans les logs PM2, c'est que la configuration PM2 utilise encore l'ancien nom de dossier :
-
-1. **Vérifier la configuration PM2** :
-   ```bash
-   cat ~/site-2nbdigital/ecosystem.config.cjs
-   ```
-   Le `cwd` doit être `/home/cire1827/site-2nbdigital` et non `/home/cire1827/2nb-digital-site`
-
-2. **Supprimer l'ancienne configuration PM2** :
-   ```bash
-   pm2 delete 2nb-digital-api
-   # OU
-   pm2 delete all
-   ```
-
-3. **Redémarrer avec la bonne configuration** :
-   ```bash
-   cd ~/site-2nbdigital
-   pm2 start ecosystem.config.cjs
-   ```
-
-4. **Vérifier que ça fonctionne** :
-   ```bash
-   pm2 list
-   pm2 logs 2nb-digital-api
-   ```
-
-### Erreur "Cannot find module" (général)
+### Erreur "Cannot find module"
 
 1. **Réinstaller les dépendances** :
    ```bash
@@ -601,12 +390,13 @@ Si vous voyez cette erreur dans les logs PM2, c'est que la configuration PM2 uti
    npm run db:generate
    ```
 
+2. **Redémarrer l'application via cPanel**
+
 ---
 
 ## 📝 Checklist de Déploiement Initial
 
 - [ ] Repository Git configuré et accessible
-- [ ] Node.js installé et fonctionnel sur le serveur
 - [ ] Projet cloné dans `/home/cire1827/site-2nbdigital` sur le serveur O2Switch
 - [ ] Dépendances frontend installées
 - [ ] Frontend buildé (`dist/` existe)
@@ -615,8 +405,9 @@ Si vous voyez cette erreur dans les logs PM2, c'est que la configuration PM2 uti
 - [ ] Client Prisma généré
 - [ ] Migrations appliquées
 - [ ] Admin par défaut créé
-- [ ] PM2 installé et application démarrée
-- [ ] Fichier `.htaccess` créé dans `public_html`
+- [ ] Application créée dans cPanel "Setup Node.js App"
+- [ ] Variables d'environnement configurées dans cPanel
+- [ ] Application démarrée et fonctionnelle
 - [ ] Site accessible sur `https://2nbdigital.com`
 - [ ] API accessible sur `https://2nbdigital.com/api/health`
 - [ ] Admin accessible sur `https://2nbdigital.com/admin/login`
@@ -630,9 +421,16 @@ Si vous voyez cette erreur dans les logs PM2, c'est que la configuration PM2 uti
 - [ ] Frontend rebuildé (`npm run build`)
 - [ ] Client Prisma régénéré si le schéma a changé
 - [ ] Migrations appliquées si nécessaire
-- [ ] Application redémarrée avec PM2
-- [ ] Vérification des logs et tests fonctionnels
+- [ ] Application redémarrée via cPanel
+- [ ] Vérification du site et tests fonctionnels
 
+---
+
+## 🎉 Félicitations !
+
+Votre site est maintenant déployé sur O2Switch et accessible sur **2nbdigital.com** !
+
+Pour toute question ou problème, consultez la section Dépannage ci-dessus ou contactez le support O2Switch.
 
 ---
 
