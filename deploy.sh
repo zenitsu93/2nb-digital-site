@@ -59,9 +59,9 @@ rsync -avz --exclude 'node_modules' --exclude '.env' --exclude '.env.production'
 rsync -avz package.json package-lock.json \
   $O2SWITCH_USER@$O2SWITCH_HOST:$O2SWITCH_DEPLOY_PATH/
 
-# Synchroniser ecosystem.config.js si présent
-if [ -f "ecosystem.config.js" ]; then
-  rsync -avz ecosystem.config.js \
+# Synchroniser ecosystem.config.cjs si présent
+if [ -f "ecosystem.config.cjs" ]; then
+  rsync -avz ecosystem.config.cjs \
     $O2SWITCH_USER@$O2SWITCH_HOST:$O2SWITCH_DEPLOY_PATH/
 fi
 
@@ -85,7 +85,7 @@ npm run db:migrate:deploy || echo "⚠️ Migration failed, check manually"
 if command -v pm2 &> /dev/null; then
   echo "🔄 Restarting application with PM2..."
   cd ..
-  pm2 restart ecosystem.config.js --update-env || pm2 start ecosystem.config.js
+  pm2 restart ecosystem.config.cjs --update-env || pm2 start ecosystem.config.cjs
 else
   echo "⚠️ PM2 not found, please restart manually"
 fi

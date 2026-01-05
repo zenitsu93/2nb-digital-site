@@ -137,10 +137,10 @@ if command -v pm2 &> /dev/null; then
     # Vérifier si l'application est déjà en cours d'exécution
     if pm2 list | grep -q "2nb-digital-api"; then
         echo "🔄 Redémarrage de l'application existante..."
-        pm2 restart ecosystem.config.js --update-env
+        pm2 restart ecosystem.config.cjs --update-env
     else
         echo "▶️ Démarrage de l'application..."
-        pm2 start ecosystem.config.js
+        pm2 start ecosystem.config.cjs
     fi
     
     # Afficher le statut
@@ -150,7 +150,7 @@ if command -v pm2 &> /dev/null; then
 else
     echo "⚠️ PM2 n'est pas installé, redémarrez manuellement l'application"
     echo "   Pour installer PM2: npm install -g pm2"
-    echo "   Pour démarrer: cd $PROJECT_DIR && pm2 start ecosystem.config.js"
+    echo "   Pour démarrer: cd $PROJECT_DIR && pm2 start ecosystem.config.cjs"
 fi
 
 echo ""
