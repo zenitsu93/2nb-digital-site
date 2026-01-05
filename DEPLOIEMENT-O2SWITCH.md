@@ -4,6 +4,20 @@ Guide étape par étape pour déployer votre site Node.js + PostgreSQL sur O2Swi
 
 ---
 
+## 🔄 Workflow de Synchronisation
+
+Ce guide utilise un **workflow Git** pour synchroniser vos modifications :
+
+1. **Déploiement initial** : Cloner le projet sur le serveur O2Switch (ÉTAPE 2)
+2. **Modifications locales** : Vous modifiez le code sur votre machine locale
+3. **Push vers Git** : Vous commitez et poussez vos changements vers le repository
+4. **Synchronisation serveur** : Sur le serveur, vous faites `git pull` pour récupérer les modifications
+5. **Déploiement** : Rebuild et redémarrage de l'application
+
+**Pour chaque modification** : Suivez l'**ÉTAPE 9 : Synchronisation des Modifications** qui détaille ce processus.
+
+---
+
 ## 📋 Informations de Connexion
 
 ### Base de Données PostgreSQL
@@ -18,33 +32,55 @@ Guide étape par étape pour déployer votre site Node.js + PostgreSQL sur O2Swi
 - **IP du serveur**: `109.234.167.45`
 - **Domaine**: `2nbdigital.com`
 - **Dossier du projet**: `/home/cire1827/2nb-digital-site`
+- **Repository Git**: `site-2nbdigital`
 
 ---
 
-## 🔧 ÉTAPE 1 : Préparation Locale
+## 🔧 ÉTAPE 1 : Préparation Locale et Workflow Git
 
-### 1.1 Nettoyer et Build le Projet
+### 1.1 Vérifier que le Projet est dans Git
+
+Assurez-vous que votre projet est bien versionné avec Git et que vous avez un repository distant (GitHub, GitLab, etc.).
 
 ```bash
 # Dans le dossier du projet
 cd C:\Users\asus\Documents\2nb-digital-site
 
-# Installer les dépendances frontend
-npm install
+# Vérifier le statut Git
+git status
 
-# Build du frontend pour la production
-npm run build
+# Vérifier le remote
+git remote -v
 ```
 
-### 1.2 Vérifier les Fichiers de Configuration
+### 1.2 Workflow de Synchronisation
+
+**Quand vous modifiez le code localement** :
+
+1. **Faire vos modifications** dans le projet
+2. **Tester localement** (optionnel) :
+   ```bash
+   npm install
+   npm run build
+   ```
+3. **Commiter et pousser** :
+   ```bash
+   git add .
+   git commit -m "Description de vos modifications"
+   git push origin main  # ou master
+   ```
+4. **Synchroniser sur le serveur** (voir ÉTAPE 9 pour la procédure complète)
+
+### 1.3 Vérifier les Fichiers de Configuration
 
 Assurez-vous que les fichiers suivants existent :
 - ✅ `ecosystem.config.cjs` (configuration PM2)
 - ✅ `server/env.o2switch.example` (template de configuration)
+- ✅ `.gitignore` (pour exclure `node_modules`, `.env`, etc.)
 
 ---
 
-## 📤 ÉTAPE 2 : Transfert des Fichiers sur O2Switch
+## 📤 ÉTAPE 2 : Clonage du Projet sur O2Switch
 
 ### 2.1 Connexion SSH
 
@@ -52,34 +88,22 @@ Assurez-vous que les fichiers suivants existent :
 ssh cire1827@109.234.167.45
 ```
 
-### 2.2 Créer le Dossier du Projet (si nécessaire)
+### 2.2 Cloner le Projet Git
 
 ```bash
+# Aller dans le dossier home
 cd ~
-mkdir -p 2nb-digital-site
+
+# Cloner le projet site-2nbdigital
+# Remplacez par l'URL complète de votre repository (GitHub, GitLab, etc.)
+# Exemple GitHub: git clone https://github.com/votre-username/site-2nbdigital.git 2nb-digital-site
+git clone https://votre-url-repo/site-2nbdigital.git 2nb-digital-site
+
+# Aller dans le dossier du projet
 cd 2nb-digital-site
 ```
 
-### 2.3 Transférer les Fichiers
-
-**Option A : Via FTP (FileZilla, WinSCP, etc.)**
-- Connectez-vous avec les identifiants FTP fournis par O2Switch
-- Transférez tous les fichiers du projet vers `/home/cire1827/2nb-digital-site`
-
-**Option B : Via Git (recommandé)**
-```bash
-# Sur le serveur O2Switch
-cd ~
-git clone https://votre-repo.git 2nb-digital-site
-cd 2nb-digital-site
-```
-
-**Option C : Via rsync (depuis votre machine locale)**
-```bash
-# Depuis votre machine Windows (avec WSL ou Git Bash)
-rsync -avz --exclude 'node_modules' --exclude '.env' --exclude '.git' \
-  ./ cire1827@109.234.167.45:~/2nb-digital-site/
-```
+**Note**: Si le projet existe déjà, vous pouvez simplement faire un `git pull` pour le mettre à jour.
 
 ---
 
@@ -329,25 +353,99 @@ curl https://2nbdigital.com/api/health
 
 ---
 
-## 🔄 ÉTAPE 9 : Migration des Données (si nécessaire)
+## 🔄 ÉTAPE 9 : Synchronisation des Modifications (Workflow Quotidien)
+
+Cette étape est à répéter **chaque fois que vous modifiez le code** et que vous voulez déployer les changements.
+
+### 9.1 Sur votre Machine Locale
+
+```bash
+# 1. Aller dans le dossier du projet
+cd C:\Users\asus\Documents\2nb-digital-site
+
+# 2. Vérifier les modifications
+git status
+
+# 3. Ajouter les fichiers modifiés
+git add .
+
+# 4. Commiter avec un message descriptif
+git commit -m "Description de vos modifications"
+
+# 5. Pousser vers le repository distant
+git push origin main  # ou master, selon votre branche
+```
+
+### 9.2 Sur le Serveur O2Switch
+
+```bash
+# 1. Se connecter au serveur
+ssh cire1827@109.234.167.45
+
+# 2. Aller dans le dossier du projet
+cd ~/2nb-digital-site
+
+# 3. Récupérer les dernières modifications
+git pull origin main  # ou master
+
+# 4. Installer/Mettre à jour les dépendances frontend si nécessaire
+npm install
+
+# 5. Rebuild le frontend avec les nouvelles modifications
+npm run build
+
+# 6. Si des dépendances backend ont changé
+cd server
+npm install --production
+
+# 7. Régénérer le client Prisma si le schéma a changé
+npm run db:generate
+
+# 8. Appliquer les migrations si nécessaire (si vous avez modifié le schéma)
+npm run db:migrate:deploy
+
+# 9. Redémarrer l'application
+cd ~/2nb-digital-site
+pm2 restart 2nb-digital-api
+
+# 10. Vérifier que tout fonctionne
+pm2 logs 2nb-digital-api --lines 50
+```
+
+### 9.3 Vérification Rapide
+
+```bash
+# Vérifier que l'application tourne
+pm2 list
+
+# Tester l'API
+curl http://localhost:3001/api/health
+
+# Voir les logs en temps réel
+pm2 logs 2nb-digital-api
+```
+
+---
+
+## 📦 ÉTAPE 10 : Migration des Données (si nécessaire)
 
 Si vous avez des données existantes à migrer :
 
-### 9.1 Exporter les Données Locales
+### 10.1 Exporter les Données Locales
 
 ```bash
 # Depuis votre machine locale
 pg_dump -h localhost -U votre_user -d votre_db > backup.sql
 ```
 
-### 9.2 Transférer le Fichier sur O2Switch
+### 10.2 Transférer le Fichier sur O2Switch
 
 ```bash
 # Via SCP
 scp backup.sql cire1827@109.234.167.45:~/backup.sql
 ```
 
-### 9.3 Importer les Données
+### 10.3 Importer les Données
 
 ```bash
 # Sur le serveur O2Switch
@@ -381,21 +479,6 @@ pm2 logs 2nb-digital-api --lines 100  # 100 dernières lignes
 
 ```bash
 pm2 stop 2nb-digital-api
-```
-
-### Mettre à Jour le Code
-
-```bash
-cd ~/2nb-digital-site
-git pull origin main  # Si vous utilisez Git
-
-# Rebuild le frontend
-npm run build
-
-# Redémarrer
-cd server
-npm run db:generate
-pm2 restart 2nb-digital-api
 ```
 
 ### Appliquer de Nouvelles Migrations
@@ -469,10 +552,11 @@ pm2 restart 2nb-digital-api
 
 ---
 
-## 📝 Checklist de Déploiement
+## 📝 Checklist de Déploiement Initial
 
-- [ ] Node.js installé et fonctionnel
-- [ ] Fichiers transférés sur le serveur
+- [ ] Repository Git configuré et accessible
+- [ ] Node.js installé et fonctionnel sur le serveur
+- [ ] Projet cloné sur le serveur O2Switch
 - [ ] Dépendances frontend installées
 - [ ] Frontend buildé (`dist/` existe)
 - [ ] Dépendances backend installées
@@ -485,6 +569,18 @@ pm2 restart 2nb-digital-api
 - [ ] Site accessible sur `https://2nbdigital.com`
 - [ ] API accessible sur `https://2nbdigital.com/api/health`
 - [ ] Admin accessible sur `https://2nbdigital.com/admin/login`
+
+## 🔄 Checklist de Synchronisation (À répéter à chaque modification)
+
+- [ ] Modifications committées localement
+- [ ] Modifications poussées vers le repository Git
+- [ ] `git pull` effectué sur le serveur
+- [ ] Dépendances mises à jour si nécessaire
+- [ ] Frontend rebuildé (`npm run build`)
+- [ ] Client Prisma régénéré si le schéma a changé
+- [ ] Migrations appliquées si nécessaire
+- [ ] Application redémarrée avec PM2
+- [ ] Vérification des logs et tests fonctionnels
 
 ---
 
