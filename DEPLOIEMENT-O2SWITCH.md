@@ -522,6 +522,35 @@ pm2 restart 2nb-digital-api
 
 3. **Vérifier que PostgreSQL est en cours d'exécution** (contactez le support O2Switch si nécessaire)
 
+### Erreur "Environment variable not found: DATABASE_URL" lors de create-default-admin
+
+Si vous obtenez cette erreur lors de l'exécution de `npm run create-default-admin` :
+
+1. **Vérifier que le fichier .env existe** :
+   ```bash
+   ls -la ~/site-2nbdigital/server/.env
+   ```
+
+2. **Vérifier le contenu du fichier .env** :
+   ```bash
+   cat ~/site-2nbdigital/server/.env
+   ```
+   Assurez-vous que la ligne `DATABASE_URL=...` est présente et correcte.
+
+3. **Vérifier que vous êtes dans le bon dossier** :
+   ```bash
+   cd ~/site-2nbdigital/server
+   npm run create-default-admin
+   ```
+
+4. **Si le problème persiste**, le script a été corrigé pour charger automatiquement le fichier .env. Assurez-vous d'avoir la dernière version :
+   ```bash
+   cd ~/site-2nbdigital
+   git pull origin main
+   cd server
+   npm run create-default-admin
+   ```
+
 ### Erreur "Cannot find module"
 
 1. **Réinstaller les dépendances** :
