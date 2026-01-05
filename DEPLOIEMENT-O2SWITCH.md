@@ -633,13 +633,6 @@ Si vous voyez cette erreur dans les logs PM2, c'est que la configuration PM2 uti
 - [ ] Application redémarrée avec PM2
 - [ ] Vérification des logs et tests fonctionnels
 
----
-
-## 🎉 Félicitations !
-
-Votre site est maintenant déployé sur O2Switch et accessible sur **2nbdigital.com** !
-
-Pour toute question ou problème, consultez la section Dépannage ci-dessus ou contactez le support O2Switch.
 
 ---
 
