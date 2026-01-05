@@ -2,7 +2,7 @@ module.exports = {
   apps: [{
     name: '2nb-digital-api',
     script: './server/server.js',
-    cwd: process.env.PWD || '/home/cire1827/2nb-digital-site',
+    cwd: process.env.PWD || '/home/cire1827/site-2nbdigital',
     instances: 1,
     exec_mode: 'fork',
     env: {

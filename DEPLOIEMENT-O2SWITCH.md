@@ -235,6 +235,17 @@ npm install -g pm2
 
 ### 5.2 Démarrer l'Application avec PM2
 
+**Important** : Si vous aviez déjà démarré l'application avec l'ancien nom de dossier, supprimez-la d'abord :
+
+```bash
+# Arrêter et supprimer l'ancienne configuration
+pm2 delete 2nb-digital-api
+# OU si le nom est différent
+pm2 delete all
+```
+
+Puis démarrez avec la nouvelle configuration :
+
 ```bash
 cd ~/site-2nbdigital
 pm2 start ecosystem.config.cjs
@@ -551,7 +562,36 @@ Si vous obtenez cette erreur lors de l'exécution de `npm run create-default-adm
    npm run create-default-admin
    ```
 
-### Erreur "Cannot find module"
+### Erreur "Cannot find module '/home/cire1827/2nb-digital-site/server/server.js'"
+
+Si vous voyez cette erreur dans les logs PM2, c'est que la configuration PM2 utilise encore l'ancien nom de dossier :
+
+1. **Vérifier la configuration PM2** :
+   ```bash
+   cat ~/site-2nbdigital/ecosystem.config.cjs
+   ```
+   Le `cwd` doit être `/home/cire1827/site-2nbdigital` et non `/home/cire1827/2nb-digital-site`
+
+2. **Supprimer l'ancienne configuration PM2** :
+   ```bash
+   pm2 delete 2nb-digital-api
+   # OU
+   pm2 delete all
+   ```
+
+3. **Redémarrer avec la bonne configuration** :
+   ```bash
+   cd ~/site-2nbdigital
+   pm2 start ecosystem.config.cjs
+   ```
+
+4. **Vérifier que ça fonctionne** :
+   ```bash
+   pm2 list
+   pm2 logs 2nb-digital-api
+   ```
+
+### Erreur "Cannot find module" (général)
 
 1. **Réinstaller les dépendances** :
    ```bash
