@@ -16,6 +16,70 @@ echo "📁 Dossier du projet: $PROJECT_DIR"
 # Aller dans le dossier du projet
 cd "$PROJECT_DIR" || exit 1
 
+# Charger Node.js/npm - Essayer plusieurs méthodes
+echo ""
+echo "🔍 Recherche de Node.js/npm..."
+
+# Méthode 1: Charger nvm si disponible
+if [ -s "$HOME/.nvm/nvm.sh" ]; then
+    echo "📦 Chargement de nvm..."
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+    # Utiliser la version par défaut ou Node 20
+    nvm use default 2>/dev/null || nvm use 20 2>/dev/null || nvm use node 2>/dev/null || true
+fi
+
+# Méthode 2: Chercher dans les chemins communs
+if ! command -v npm &> /dev/null; then
+    # Chemins communs pour Node.js sur O2Switch
+    NODE_PATHS=(
+        "/usr/local/bin/node"
+        "/usr/bin/node"
+        "$HOME/.nvm/versions/node/*/bin/node"
+        "$HOME/nodejs/bin/node"
+        "/opt/nodejs/bin/node"
+    )
+    
+    for NODE_PATH in "${NODE_PATHS[@]}"; do
+        if [ -f "$NODE_PATH" ] || [ -d "$(dirname "$NODE_PATH")" ]; then
+            NODE_DIR="$(dirname "$NODE_PATH")"
+            if [ -f "$NODE_DIR/npm" ]; then
+                echo "✅ Node.js trouvé dans: $NODE_DIR"
+                export PATH="$NODE_DIR:$PATH"
+                break
+            fi
+        fi
+    done
+fi
+
+# Vérifier que npm est maintenant disponible
+if ! command -v npm &> /dev/null; then
+    echo ""
+    echo "❌ ERREUR: npm n'est pas trouvé!"
+    echo ""
+    echo "📋 Solutions possibles:"
+    echo "   1. Installer Node.js via nvm:"
+    echo "      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash"
+    echo "      source ~/.bashrc"
+    echo "      nvm install 20"
+    echo "      nvm use 20"
+    echo ""
+    echo "   2. Ou contacter le support O2Switch pour installer Node.js"
+    echo ""
+    echo "   3. Vérifier où Node.js est installé:"
+    echo "      which node"
+    echo "      which npm"
+    echo "      ls -la ~/.nvm"
+    echo ""
+    exit 1
+fi
+
+# Afficher les versions
+echo "✅ Node.js/npm trouvé!"
+echo "   Node.js: $(node --version 2>/dev/null || echo 'non disponible')"
+echo "   npm: $(npm --version 2>/dev/null || echo 'non disponible')"
+
 # Pull les dernières modifications (si nécessaire)
 # Note: Le hook post-receive est appelé après un push, donc le code est déjà là
 # Mais on peut faire un pull pour être sûr
