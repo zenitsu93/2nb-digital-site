@@ -124,6 +124,8 @@ JWT_EXPIRES_IN=7d
 
 Cliquez sur **"Create"** ou **"Créer"**
 
+**⚠️ Note sur l'erreur .htaccess** : Si vous obtenez une erreur concernant `.htaccess` lors de la création, c'est normal. cPanel essaie de créer un fichier `.htaccess` mais ce n'est pas nécessaire avec "Setup Node.js App" car le proxy est géré automatiquement. Vous pouvez ignorer cette erreur ou créer un fichier `.htaccess` vide dans `public_html` si nécessaire (mais ce n'est généralement pas requis).
+
 ### 2.5 Installer les Dépendances
 
 Après avoir créé l'application, CloudLinux va automatiquement :
@@ -285,6 +287,24 @@ Puis redémarrez l'application via cPanel.
 ---
 
 ## 🐛 Dépannage
+
+### Erreur ".htaccess file not found" ou "Unable to set environment variables in htaccess file"
+
+Si vous obtenez cette erreur lors de la création de l'application dans cPanel :
+
+**Solution 1 (Recommandée)** : Créez un fichier `.htaccess` vide dans le dossier `public_html` :
+
+```bash
+ssh cire1827@109.234.167.45
+# Trouver le bon dossier public_html
+touch ~/public_html/.htaccess
+# OU
+touch ~/domains/2nbdigital.com/public_html/.htaccess
+```
+
+**Note** : Avec "Setup Node.js App", le fichier `.htaccess` peut rester vide car cPanel gère automatiquement le proxy vers Node.js. Cette erreur est souvent juste un avertissement et n'empêche pas l'application de fonctionner.
+
+**Solution 2** : Si l'erreur persiste, vous pouvez ignorer cette erreur. L'application devrait fonctionner même si cette erreur apparaît.
 
 ### Erreur "node_modules folder/file should not exist"
 

@@ -45,7 +45,13 @@ app.use('/uploads', express.static(uploadsDir));
 // Servir les fichiers statiques du frontend (dist/)
 const frontendDir = join(__dirname, '..', 'dist');
 if (fs.existsSync(frontendDir)) {
-  app.use(express.static(frontendDir));
+  // Servir les fichiers statiques avec des options pour mieux gérer les assets
+  app.use(express.static(frontendDir, {
+    maxAge: '1y',
+    etag: true,
+    lastModified: true,
+    index: false, // Ne pas servir index.html automatiquement
+  }));
   console.log('📁 Frontend statique servi depuis:', frontendDir);
 }
 
@@ -74,6 +80,13 @@ if (fs.existsSync(frontendDir)) {
     if (req.path.startsWith('/api')) {
       return res.status(404).json({ error: 'API route not found' });
     }
+    
+    // Ne pas intercepter les fichiers statiques (assets, images, etc.)
+    const requestedPath = join(frontendDir, req.path);
+    if (fs.existsSync(requestedPath) && fs.statSync(requestedPath).isFile()) {
+      return res.sendFile(requestedPath);
+    }
+    
     // Servir index.html pour toutes les autres routes (React Router)
     res.sendFile(join(frontendDir, 'index.html'));
   });
