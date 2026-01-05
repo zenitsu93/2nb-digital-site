@@ -92,10 +92,10 @@ echo ""
 echo "📦 Installation des dépendances frontend..."
 npm ci
 
-# Build du frontend
+# Build du frontend avec l'URL de production
 echo ""
 echo "🔨 Build du frontend..."
-npm run build
+VITE_API_URL=/api npm run build
 
 if [ $? -ne 0 ]; then
     echo "❌ Erreur lors du build du frontend"
@@ -153,6 +153,18 @@ else
     echo "   Pour démarrer: cd $PROJECT_DIR && pm2 start ecosystem.config.cjs"
 fi
 
+# Copier .htaccess vers public_html si nécessaire
+echo ""
+echo "📋 Mise à jour de .htaccess..."
+PUBLIC_HTML_DIR="${PUBLIC_HTML_DIR:-$HOME/public_html}"
+if [ -d "$PUBLIC_HTML_DIR" ] && [ -f "$PROJECT_DIR/.htaccess" ]; then
+    cp "$PROJECT_DIR/.htaccess" "$PUBLIC_HTML_DIR/.htaccess"
+    echo "   ✅ .htaccess mis à jour"
+elif [ -d "$HOME/domains/2nbdigital.com/public_html" ] && [ -f "$PROJECT_DIR/.htaccess" ]; then
+    cp "$PROJECT_DIR/.htaccess" "$HOME/domains/2nbdigital.com/public_html/.htaccess"
+    echo "   ✅ .htaccess mis à jour"
+fi
+
 echo ""
 echo "✅ Déploiement terminé avec succès!"
-echo "🌐 Vérifiez votre application sur: https://votre-domaine.com"
+echo "🌐 Vérifiez votre application sur: https://2nbdigital.com"

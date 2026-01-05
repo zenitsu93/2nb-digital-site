@@ -22,7 +22,7 @@ dotenv.config();
 const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const FRONTEND_URL = process.env.FRONTEND_URL || `http://localhost:${PORT}`;
 
 // Middleware
 app.use(cors({
@@ -42,7 +42,14 @@ if (!fs.existsSync(uploadsDir)) {
 // Servir les fichiers statiques (uploads)
 app.use('/uploads', express.static(uploadsDir));
 
-// Routes publiques
+// Servir les fichiers statiques du frontend (dist/)
+const frontendDir = join(__dirname, '..', 'dist');
+if (fs.existsSync(frontendDir)) {
+  app.use(express.static(frontendDir));
+  console.log('📁 Frontend statique servi depuis:', frontendDir);
+}
+
+// Routes API
 app.use('/api/auth', authRoutes);
 
 // Routes publiques (lecture seule pour le site)
@@ -59,6 +66,18 @@ app.use('/api/upload', authenticateToken, uploadRoutes);
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'API is running' });
 });
+
+// Servir le frontend React pour toutes les routes non-API (SPA routing)
+if (fs.existsSync(frontendDir)) {
+  app.get('*', (req, res) => {
+    // Ne pas intercepter les routes API
+    if (req.path.startsWith('/api')) {
+      return res.status(404).json({ error: 'API route not found' });
+    }
+    // Servir index.html pour toutes les autres routes (React Router)
+    res.sendFile(join(frontendDir, 'index.html'));
+  });
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
