@@ -43,119 +43,31 @@ git clone https://votre-url-repo/site-2nbdigital.git site-2nbdigital
 cd ~/site-2nbdigital
 ```
 
----
+### 1.3 ⚠️ IMPORTANT : Supprimer les dossiers node_modules
 
-## 📦 ÉTAPE 2 : Installation des Dépendances et Build
-
-### 2.1 Installer les Dépendances Frontend
+**CloudLinux NodeJS Selector** crée automatiquement un symlink `node_modules` vers un environnement virtuel. Si des dossiers `node_modules` existent déjà, cela crée un conflit.
 
 ```bash
-cd ~/site-2nbdigital
-npm install
+# Supprimer node_modules à la racine (s'il existe)
+rm -rf ~/site-2nbdigital/node_modules
+
+# Supprimer node_modules dans server (s'il existe)
+rm -rf ~/site-2nbdigital/server/node_modules
 ```
 
-### 2.2 Build du Frontend
-
-```bash
-# Build avec l'URL de production
-VITE_API_URL=/api npm run build
-```
-
-### 2.3 Installer les Dépendances Backend
-
-```bash
-cd ~/site-2nbdigital/server
-npm install --production
-```
-
-### 2.4 Générer le Client Prisma
-
-```bash
-npm run db:generate
-```
+**Note** : CloudLinux créera automatiquement les symlinks `node_modules` nécessaires lors de la création de l'application dans cPanel.
 
 ---
 
-## 🗄️ ÉTAPE 3 : Configuration de la Base de Données
+## 🚀 ÉTAPE 2 : Configuration via cPanel "Setup Node.js App"
 
-### 3.1 Créer le Fichier .env
-
-```bash
-cd ~/site-2nbdigital/server
-
-# Créer le fichier .env
-nano .env
-```
-
-Collez ce contenu :
-
-```env
-# Base de données PostgreSQL O2Switch
-DATABASE_URL="postgresql://cire1827_christian:siriusj20023700@127.0.0.1:5432/cire1827_2nbsite?schema=public"
-
-# Configuration serveur
-PORT=3001
-NODE_ENV=production
-
-# URL du frontend en production
-FRONTEND_URL=https://2nbdigital.com
-
-# JWT Secret (générer un secret fort)
-JWT_SECRET=votre-secret-jwt-tres-securise-changez-moi
-JWT_EXPIRES_IN=7d
-```
-
-**Important**: Générez un JWT_SECRET sécurisé :
-```bash
-openssl rand -base64 32
-```
-Copiez le résultat et remplacez `votre-secret-jwt-tres-securise-changez-moi` dans le fichier .env.
-
-Sauvegarder : `Ctrl+O`, `Entrée`, `Ctrl+X`
-
-### 3.2 Vérifier la Connexion à la Base de Données
-
-```bash
-# Tester la connexion PostgreSQL
-psql -h 127.0.0.1 -U cire1827_christian -d cire1827_2nbsite
-
-# Si ça fonctionne, vous verrez le prompt PostgreSQL
-# Tapez \q pour quitter
-```
-
-### 3.3 Appliquer les Migrations Prisma
-
-```bash
-cd ~/site-2nbdigital/server
-
-# Appliquer toutes les migrations
-npm run db:migrate:deploy
-```
-
-### 3.4 Créer l'Administrateur par Défaut
-
-```bash
-cd ~/site-2nbdigital/server
-npm run create-default-admin
-```
-
-**Identifiants par défaut** :
-- **Username**: `christian`
-- **Password**: `j20023700`
-
-**⚠️ IMPORTANT**: Changez le mot de passe après la première connexion !
-
----
-
-## 🚀 ÉTAPE 4 : Configuration via cPanel "Setup Node.js App"
-
-### 4.1 Accéder à l'Outil
+### 2.1 Accéder à l'Outil
 
 1. Connectez-vous à votre **cPanel**
 2. Dans la section **Logiciels** ou **Applications**, trouvez **"Setup Node.js App"**
 3. Cliquez sur **"Create Application"**
 
-### 4.2 Configuration de l'Application
+### 2.2 Configuration de l'Application
 
 Remplissez les champs suivants :
 
@@ -179,9 +91,9 @@ Remplissez les champs suivants :
 
 - **Application Mode** : `Production`
 
-### 4.3 Variables d'Environnement
+### 2.3 Variables d'Environnement
 
-Dans la section **Environment Variables**, ajoutez les variables suivantes :
+Dans la section **Environment Variables** de cPanel, ajoutez **TOUTES** les variables suivantes (une par ligne) :
 
 ```
 DATABASE_URL=postgresql://cire1827_christian:siriusj20023700@127.0.0.1:5432/cire1827_2nbsite?schema=public
@@ -192,28 +104,97 @@ JWT_SECRET=votre-secret-jwt-tres-securise
 JWT_EXPIRES_IN=7d
 ```
 
-**Note** : Remplacez `votre-secret-jwt-tres-securise` par le secret que vous avez généré à l'étape 3.1.
+**⚠️ IMPORTANT** : 
+- **Générez un JWT_SECRET sécurisé** avec cette commande (sur le serveur) :
+  ```bash
+  openssl rand -base64 32
+  ```
+  Copiez le résultat et remplacez `votre-secret-jwt-tres-securise` dans les variables d'environnement.
+- **Toutes ces variables sont nécessaires** pour que l'application fonctionne correctement
 
-### 4.4 Créer l'Application
+**Variables requises** :
+- `DATABASE_URL` : Connexion à PostgreSQL (obligatoire)
+- `PORT` : Port sur lequel l'application écoute (par défaut 3001)
+- `NODE_ENV` : Environnement (production)
+- `FRONTEND_URL` : URL du site en production (pour CORS)
+- `JWT_SECRET` : Secret pour signer les tokens JWT (obligatoire, doit être sécurisé)
+- `JWT_EXPIRES_IN` : Durée de validité des tokens (par défaut 7d)
+
+### 2.4 Créer l'Application
 
 Cliquez sur **"Create"** ou **"Créer"**
 
-### 4.5 Démarrer l'Application
+### 2.5 Installer les Dépendances
 
-Une fois l'application créée, cliquez sur le bouton **"Run NPM Install"** ou **"Installer les dépendances"** si disponible, puis sur **"Restart App"** ou **"Redémarrer l'application"**.
+Après avoir créé l'application, CloudLinux va automatiquement :
+1. Créer le symlink `node_modules` vers l'environnement virtuel
+2. Installer les dépendances depuis `package.json`
+
+Cliquez sur le bouton **"Run NPM Install"** ou **"Installer les dépendances"** si disponible.
+
+**⚠️ IMPORTANT** : Si vous obtenez une erreur concernant `node_modules`, assurez-vous d'avoir supprimé tous les dossiers `node_modules` existants (voir étape 1.3).
+
+### 2.6 Démarrer l'Application
+
+Une fois les dépendances installées, cliquez sur **"Restart App"** ou **"Redémarrer l'application"**.
 
 ---
 
-## ✅ ÉTAPE 5 : Tests et Vérification
+## 📦 ÉTAPE 3 : Configuration Post-Déploiement (via SSH)
 
-### 5.1 Tester dans le Navigateur
+Une fois l'application créée et démarrée dans cPanel, effectuez ces étapes via SSH :
+
+### 3.1 Générer le Client Prisma
+
+```bash
+ssh cire1827@109.234.167.45
+cd ~/site-2nbdigital/server
+npm run db:generate
+```
+
+### 3.2 Appliquer les Migrations Prisma
+
+```bash
+cd ~/site-2nbdigital/server
+npm run db:migrate:deploy
+```
+
+### 3.3 Créer l'Administrateur par Défaut
+
+```bash
+cd ~/site-2nbdigital/server
+npm run create-default-admin
+```
+
+**Identifiants par défaut** :
+- **Username**: `christian`
+- **Password**: `j20023700`
+
+**⚠️ IMPORTANT**: Changez le mot de passe après la première connexion !
+
+### 3.4 Build du Frontend
+
+```bash
+cd ~/site-2nbdigital
+VITE_API_URL=/api npm run build
+```
+
+### 3.5 Redémarrer l'Application
+
+Retournez dans cPanel > Setup Node.js App et cliquez sur **"Restart App"** pour redémarrer l'application avec toutes les configurations.
+
+---
+
+## ✅ ÉTAPE 4 : Tests et Vérification
+
+### 4.1 Tester dans le Navigateur
 
 1. Ouvrez `https://2nbdigital.com` dans votre navigateur
 2. Le site devrait s'afficher
 3. Testez l'API : `https://2nbdigital.com/api/health`
 4. Testez l'admin : `https://2nbdigital.com/admin/login`
 
-### 5.2 Vérifier les Logs dans cPanel
+### 4.2 Vérifier les Logs dans cPanel
 
 Dans l'outil "Setup Node.js App", vous pouvez :
 - Voir les **logs de l'application**
@@ -223,11 +204,11 @@ Dans l'outil "Setup Node.js App", vous pouvez :
 
 ---
 
-## 🔄 ÉTAPE 6 : Synchronisation des Modifications (Workflow Quotidien)
+## 🔄 ÉTAPE 5 : Synchronisation des Modifications (Workflow Quotidien)
 
 Cette étape est à répéter **chaque fois que vous modifiez le code** et que vous voulez déployer les changements.
 
-### 6.1 Sur votre Machine Locale
+### 5.1 Sur votre Machine Locale
 
 ```bash
 # 1. Aller dans le dossier du projet
@@ -246,7 +227,7 @@ git commit -m "Description de vos modifications"
 git push origin main  # ou master, selon votre branche
 ```
 
-### 6.2 Sur le Serveur O2Switch
+### 5.2 Sur le Serveur O2Switch
 
 ```bash
 # 1. Se connecter au serveur
@@ -258,34 +239,19 @@ cd ~/site-2nbdigital
 # 3. Récupérer les dernières modifications
 git pull origin main  # ou master
 
-# 4. Installer/Mettre à jour les dépendances frontend si nécessaire
-npm install
+# 4. Rebuild le frontend avec les nouvelles modifications
+VITE_API_URL=/api npm run build
 
-# 5. Rebuild le frontend avec les nouvelles modifications
-npm run build
-
-# 6. Si des dépendances backend ont changé
+# 5. Si des dépendances backend ont changé
 cd server
-npm install --production
+npm run db:generate  # Si le schéma Prisma a changé
+npm run db:migrate:deploy  # Si vous avez de nouvelles migrations
 
-# 7. Régénérer le client Prisma si le schéma a changé
-npm run db:generate
-
-# 8. Appliquer les migrations si nécessaire (si vous avez modifié le schéma)
-npm run db:migrate:deploy
-
-# 9. Redémarrer l'application via cPanel
+# 6. Redémarrer l'application via cPanel
 # Allez dans cPanel > Setup Node.js App > Cliquez sur "Restart App"
 ```
 
-**OU** redémarrer via SSH si l'outil cPanel le permet :
-
-```bash
-# Vérifier si l'outil cPanel expose des commandes
-# Sinon, utilisez l'interface cPanel pour redémarrer
-```
-
-### 6.3 Vérification Rapide
+### 5.3 Vérification Rapide
 
 1. Vérifiez dans cPanel que l'application est en cours d'exécution
 2. Testez votre site dans le navigateur
@@ -320,21 +286,49 @@ Puis redémarrez l'application via cPanel.
 
 ## 🐛 Dépannage
 
+### Erreur "node_modules folder/file should not exist"
+
+Si vous obtenez cette erreur lors de la création de l'application dans cPanel :
+
+1. **Supprimer tous les dossiers node_modules** :
+   ```bash
+   ssh cire1827@109.234.167.45
+   cd ~/site-2nbdigital
+   rm -rf node_modules
+   rm -rf server/node_modules
+   ```
+
+2. **Vérifier qu'ils sont bien supprimés** :
+   ```bash
+   ls -la | grep node_modules
+   ls -la server/ | grep node_modules
+   ```
+
+3. **Réessayer de créer l'application dans cPanel**
+
+CloudLinux créera automatiquement les symlinks `node_modules` nécessaires vers l'environnement virtuel.
+
 ### L'Application ne Démarre pas
 
 1. **Vérifier les logs dans cPanel** :
    - Allez dans **Setup Node.js App**
    - Cliquez sur **"View Logs"** pour voir les erreurs
 
-2. **Vérifier le fichier .env** :
-   ```bash
-   cat ~/site-2nbdigital/server/.env
-   ```
-
-3. **Vérifier que le fichier server.js existe** :
+2. **Vérifier que le fichier server.js existe** :
    ```bash
    ls -la ~/site-2nbdigital/server/server.js
    ```
+
+3. **Vérifier que les symlinks node_modules existent** :
+   ```bash
+   ls -la ~/site-2nbdigital/node_modules
+   ls -la ~/site-2nbdigital/server/node_modules
+   ```
+   Ils doivent être des symlinks (flèche →), pas des dossiers normaux.
+
+4. **Vérifier les variables d'environnement dans cPanel** :
+   - Allez dans **Setup Node.js App**
+   - Vérifiez que toutes les variables d'environnement sont correctement définies
 
 ### Le Frontend ne s'Affiche pas
 
@@ -353,42 +347,28 @@ Puis redémarrez l'application via cPanel.
 
 ### Erreur de Connexion à la Base de Données
 
-1. **Vérifier les identifiants dans .env** :
-   ```bash
-   cat ~/site-2nbdigital/server/.env
-   ```
+1. **Vérifier les variables d'environnement dans cPanel** :
+   - Allez dans **Setup Node.js App**
+   - Vérifiez que `DATABASE_URL` est correctement définie
 
 2. **Tester la connexion PostgreSQL** :
    ```bash
    psql -h 127.0.0.1 -U cire1827_christian -d cire1827_2nbsite
    ```
 
-3. **Vérifier les variables d'environnement dans cPanel** :
-   - Allez dans **Setup Node.js App**
-   - Vérifiez que toutes les variables d'environnement sont correctement définies
-
 ### Erreur "Environment variable not found: DATABASE_URL"
 
-1. **Vérifier que le fichier .env existe** :
-   ```bash
-   ls -la ~/site-2nbdigital/server/.env
-   ```
-
-2. **Vérifier les variables d'environnement dans cPanel** :
+1. **Vérifier les variables d'environnement dans cPanel** :
    - Allez dans **Setup Node.js App**
-   - Vérifiez que `DATABASE_URL` est bien définie dans les variables d'environnement
+   - Vérifiez que toutes les variables d'environnement sont bien définies (voir étape 2.3)
 
-3. **Si vous utilisez le fichier .env**, assurez-vous que l'application peut y accéder. Sinon, utilisez les variables d'environnement définies dans cPanel.
+2. **Redémarrer l'application** après avoir ajouté/modifié les variables
 
 ### Erreur "Cannot find module"
 
-1. **Réinstaller les dépendances** :
-   ```bash
-   cd ~/site-2nbdigital/server
-   rm -rf node_modules
-   npm install --production
-   npm run db:generate
-   ```
+1. **Réinstaller les dépendances via cPanel** :
+   - Allez dans **Setup Node.js App**
+   - Cliquez sur **"Run NPM Install"**
 
 2. **Redémarrer l'application via cPanel**
 
@@ -398,15 +378,14 @@ Puis redémarrez l'application via cPanel.
 
 - [ ] Repository Git configuré et accessible
 - [ ] Projet cloné dans `/home/cire1827/site-2nbdigital` sur le serveur O2Switch
-- [ ] Dépendances frontend installées
-- [ ] Frontend buildé (`dist/` existe)
-- [ ] Dépendances backend installées
-- [ ] Fichier `.env` créé avec les bonnes informations
-- [ ] Client Prisma généré
-- [ ] Migrations appliquées
-- [ ] Admin par défaut créé
+- [ ] Dossiers `node_modules` supprimés (étape 1.3)
 - [ ] Application créée dans cPanel "Setup Node.js App"
-- [ ] Variables d'environnement configurées dans cPanel
+- [ ] Variables d'environnement configurées dans cPanel (étape 2.3)
+- [ ] Dépendances installées via cPanel (étape 2.5)
+- [ ] Client Prisma généré (étape 3.1)
+- [ ] Migrations appliquées (étape 3.2)
+- [ ] Admin par défaut créé (étape 3.3)
+- [ ] Frontend buildé (étape 3.4)
 - [ ] Application démarrée et fonctionnelle
 - [ ] Site accessible sur `https://2nbdigital.com`
 - [ ] API accessible sur `https://2nbdigital.com/api/health`
@@ -417,7 +396,6 @@ Puis redémarrez l'application via cPanel.
 - [ ] Modifications committées localement
 - [ ] Modifications poussées vers le repository Git
 - [ ] `git pull` effectué sur le serveur
-- [ ] Dépendances mises à jour si nécessaire
 - [ ] Frontend rebuildé (`npm run build`)
 - [ ] Client Prisma régénéré si le schéma a changé
 - [ ] Migrations appliquées si nécessaire
