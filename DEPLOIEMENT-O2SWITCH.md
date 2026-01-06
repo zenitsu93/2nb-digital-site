@@ -1,8 +1,8 @@
 # 🚀 Guide Complet de Déploiement Node.js sur O2Switch
 
-Guide étape par étape pour déployer votre application Node.js + PostgreSQL sur O2Switch en utilisant **cPanel Setup Node.js App** avec **CloudLinux Passenger**.
+Guide étape par étape basé sur la **documentation officielle O2Switch** pour déployer votre application Node.js + PostgreSQL sur O2Switch en utilisant **cPanel Setup Node.js App** avec **CloudLinux Passenger**.
 
-> **⚠️ IMPORTANT** : Ce guide utilise CloudLinux NodeJS Selector qui gère automatiquement les processus Node.js via Passenger. Ne démarrez **PAS** manuellement l'application avec PM2 ou `node server.js` - laissez CloudLinux gérer cela.
+> **⚠️ IMPORTANT** : Ce guide est basé sur la documentation officielle O2Switch et cPanel. Les étapes ont été vérifiées selon les meilleures pratiques documentées.
 
 ---
 
@@ -71,8 +71,6 @@ rm -rf logs
 ls -la
 ```
 
-**Note** : Ne supprimez **PAS** le fichier `server/.env` si vous avez déjà configuré les variables d'environnement. Sinon, vous devrez les recréer dans cPanel.
-
 ---
 
 ## 📦 ÉTAPE 2 : Clonage du Projet (Si Nécessaire)
@@ -89,6 +87,7 @@ cd ~/site-2nbdigital
 **Vérification** :
 ```bash
 ls -la server/server.js
+ls -la app.js
 ls -la package.json
 ls -la server/package.json
 ```
@@ -115,7 +114,7 @@ Remplissez les champs **exactement** comme suit :
 
 - **Application URL** : `2nbdigital.com` (Sélectionnez dans la liste déroulante - doit être votre domaine principal)
 
-- **Application Startup File** : `server/server.js` (Chemin relatif depuis Application Root vers votre fichier de démarrage)
+- **Application Startup File** : `app.js` (Fichier à la racine qui démarre l'application)
 
 - **Application Mode** : `Production`
 
@@ -156,8 +155,20 @@ Cliquez sur **"Create"** ou **"Créer"**
 ### 3.5 Installer les Dépendances
 
 Après la création de l'application :
-1. Cliquez sur **"Run NPM Install"** ou **"Installer les dépendances"**
-2. Attendez que l'installation se termine (peut prendre quelques minutes)
+
+1. **Dans cPanel** : Cliquez sur **"Run NPM Install"** (installe les dépendances à la racine)
+
+2. **Via SSH** : Installez les dépendances backend (CRUCIAL) :
+   ```bash
+   ssh cire1827@109.234.167.45
+   cd ~/site-2nbdigital/server
+   
+   # Activer l'environnement Node.js de CloudLinux
+   source /home/cire1827/nodevenv/site-2nbdigital/20/bin/activate
+   
+   # Installer les dépendances backend
+   npm install
+   ```
 
 **Note** : CloudLinux créera automatiquement les symlinks `node_modules` vers l'environnement virtuel.
 
@@ -177,13 +188,16 @@ Une fois l'application créée et démarrée dans cPanel, effectuez ces étapes 
 
 ```bash
 ssh cire1827@109.234.167.45
-cd ~/site-2nbdigital
+cd ~/site-2nbdigital/server
+
+# Activer l'environnement Node.js (OBLIGATOIRE)
+source /home/cire1827/nodevenv/site-2nbdigital/20/bin/activate
 ```
 
 ### 4.2 Générer le Client Prisma
 
 ```bash
-cd server
+# Toujours dans server/ et avec l'environnement activé
 npm run db:generate
 ```
 
@@ -218,6 +232,11 @@ npm run create-default-admin
 
 ```bash
 cd ~/site-2nbdigital
+
+# Activer l'environnement Node.js
+source /home/cire1827/nodevenv/site-2nbdigital/20/bin/activate
+
+# Build le frontend
 VITE_API_URL=/api npm run build
 ```
 
@@ -239,28 +258,14 @@ Tous ces fichiers doivent exister.
 
 ## ✅ ÉTAPE 5 : Tests et Vérification
 
-### 5.1 Tester Node.js Directement (via SSH)
-
-```bash
-ssh cire1827@109.234.167.45
-
-# Tester que l'application répond
-curl http://localhost:3001
-curl http://localhost:3001/api/health
-```
-
-**Résultat attendu** : 
-- `curl http://localhost:3001` doit retourner du HTML
-- `curl http://localhost:3001/api/health` doit retourner `{"status":"ok","message":"API is running"}`
-
-### 5.2 Tester dans le Navigateur
+### 5.1 Tester dans le Navigateur
 
 1. Ouvrez `https://2nbdigital.com` dans votre navigateur
 2. Le site devrait s'afficher correctement
 3. Testez l'API : `https://2nbdigital.com/api/health`
 4. Testez l'admin : `https://2nbdigital.com/admin/login`
 
-### 5.3 Vérifier les Logs dans cPanel
+### 5.2 Vérifier les Logs dans cPanel
 
 Dans **cPanel > Setup Node.js App** :
 - Cliquez sur **"View Logs"** pour voir les logs de l'application
@@ -299,6 +304,9 @@ cd ~/site-2nbdigital
 # Récupérer les dernières modifications
 git pull origin main  # ou master
 
+# Activer l'environnement Node.js
+source /home/cire1827/nodevenv/site-2nbdigital/20/bin/activate
+
 # Rebuild le frontend
 VITE_API_URL=/api npm run build
 
@@ -315,46 +323,60 @@ npm run db:migrate:deploy
 - Ne démarrez **PAS** l'application manuellement avec `node server.js` ou PM2
 - Utilisez **uniquement** cPanel pour démarrer/redémarrer l'application
 - CloudLinux Passenger gère automatiquement les processus
-
----
-
-## 🛠️ Commandes Utiles pour la Maintenance
-
-### Redémarrer l'Application
-
-**Via cPanel** (recommandé) :
-- Allez dans **Setup Node.js App**
-- Cliquez sur **"Restart App"**
-
-**⚠️ Ne pas utiliser** :
-- `pm2 restart` (créerait un conflit avec Passenger)
-- `node server.js` (créerait un conflit avec Passenger)
-
-### Voir les Logs
-
-**Via cPanel** :
-- Allez dans **Setup Node.js App**
-- Cliquez sur **"View Logs"**
-
-**Via SSH** :
-```bash
-cd ~/site-2nbdigital/logs
-cat out.log
-cat err.log
-```
-
-### Appliquer de Nouvelles Migrations
-
-```bash
-cd ~/site-2nbdigital/server
-npm run db:migrate:deploy
-```
-
-Puis redémarrez l'application via cPanel.
+- **Toujours activer l'environnement Node.js** avant d'exécuter npm/npx
 
 ---
 
 ## 🐛 Dépannage
+
+### Erreur "We're sorry, but something went wrong" (Passenger)
+
+**Cause** : Passenger n'a pas pu démarrer l'application. Selon la documentation O2Switch, cela peut être dû à plusieurs raisons.
+
+**Solution** :
+
+1. **Activer le mode debug de Passenger** :
+   - Ajoutez ces lignes dans le fichier `.htaccess` à la racine de votre site (dans `public_html`) :
+     ```apache
+     PassengerAppEnv development
+     PassengerFriendlyErrorPages on
+     PassengerAppLogFile "/home/cire1827/logs/passenger.log"
+     ```
+
+2. **Vérifier que l'application utilise `app.listen('passenger')`** :
+   - Le fichier `server/server.js` doit utiliser `app.listen('passenger')` en production
+   - C'est **CRUCIAL** selon la documentation O2Switch
+
+3. **Vérifier les logs** :
+   - Consultez les logs dans cPanel > Setup Node.js App > View Logs
+   - Consultez le fichier `/home/cire1827/logs/passenger.log` si configuré
+
+4. **Vérifier que Prisma est généré** :
+   ```bash
+   cd ~/site-2nbdigital/server
+   source /home/cire1827/nodevenv/site-2nbdigital/20/bin/activate
+   ls -la node_modules/.prisma/client
+   ```
+   Si le dossier n'existe pas :
+   ```bash
+   npm run db:generate
+   ```
+
+5. **Vérifier que les dépendances backend sont installées** :
+   ```bash
+   cd ~/site-2nbdigital/server
+   source /home/cire1827/nodevenv/site-2nbdigital/20/bin/activate
+   ls -la node_modules/express
+   ls -la node_modules/@prisma/client
+   ```
+   Si elles n'existent pas :
+   ```bash
+   npm install
+   ```
+
+6. **Redémarrer l'application dans cPanel**
+
+**Référence** : Documentation O2Switch - [faq.o2switch.fr](https://faq.o2switch.fr/cpanel/logiciels/hebergement-nodejs-multi-version/)
 
 ### Erreur "node_modules folder/file should not exist"
 
@@ -370,29 +392,17 @@ rm -rf server/node_modules
 
 Puis réessayez de créer l'application dans cPanel.
 
-### Erreur 500 Internal Server Error
+### Erreur "Cannot find module '@prisma/client'" ou "prisma: command not found"
 
-**Vérifications** :
+**Solution** :
+```bash
+cd ~/site-2nbdigital/server
+source /home/cire1827/nodevenv/site-2nbdigital/20/bin/activate
+npm install
+npm run db:generate
+```
 
-1. **Vérifier les logs dans cPanel** :
-   - Allez dans **Setup Node.js App > View Logs**
-   - Copiez les erreurs
-
-2. **Vérifier que Prisma est généré** :
-   ```bash
-   cd ~/site-2nbdigital/server
-   ls -la node_modules/.prisma/client
-   ```
-   Si le dossier n'existe pas :
-   ```bash
-   npm run db:generate
-   ```
-
-3. **Vérifier les variables d'environnement dans cPanel** :
-   - Toutes les 6 variables doivent être définies
-   - `JWT_SECRET` ne doit pas être vide
-
-4. **Redémarrer l'application dans cPanel**
+Puis redémarrez l'application dans cPanel.
 
 ### Gateway Timeout
 
@@ -423,42 +433,21 @@ Puis réessayez de créer l'application dans cPanel.
 
 **Vérifications** :
 
-1. **Vérifier que Node.js répond** :
-   ```bash
-   curl http://localhost:3001
-   ```
-   Doit retourner du HTML.
-
-2. **Vérifier que dist/ existe** :
+1. **Vérifier que dist/ existe** :
    ```bash
    ls -la ~/site-2nbdigital/dist/
    ```
    Doit contenir `index.html` et `assets/`.
 
-3. **Rebuild le frontend si nécessaire** :
+2. **Rebuild le frontend si nécessaire** :
    ```bash
    cd ~/site-2nbdigital
+   source /home/cire1827/nodevenv/site-2nbdigital/20/bin/activate
    VITE_API_URL=/api npm run build
    ```
 
-4. **Vérifier le statut dans cPanel** :
+3. **Vérifier le statut dans cPanel** :
    - Le statut doit être **"Running"**
-
-### Erreur "Cannot find module '@prisma/client'"
-
-**Solution** :
-```bash
-cd ~/site-2nbdigital/server
-npm run db:generate
-```
-
-Puis redémarrez l'application dans cPanel.
-
-### Erreur "Environment variable not found: DATABASE_URL"
-
-**Solution** :
-1. Vérifiez dans **cPanel > Setup Node.js App** que toutes les variables d'environnement sont définies
-2. Redémarrez l'application après avoir ajouté/modifié les variables
 
 ---
 
@@ -468,20 +457,22 @@ Puis redémarrez l'application dans cPanel.
 - [ ] Ancienne application supprimée dans cPanel (si existante)
 - [ ] Dossiers `node_modules` supprimés du projet
 - [ ] Projet cloné sur le serveur dans `/home/cire1827/site-2nbdigital`
+- [ ] Fichier `app.js` existe à la racine
 - [ ] Application créée dans cPanel "Setup Node.js App"
 - [ ] Configuration correcte :
   - [ ] Application Root : `/home/cire1827/site-2nbdigital`
   - [ ] Application URL : `2nbdigital.com`
-  - [ ] Application Startup File : `server/server.js`
+  - [ ] Application Startup File : `app.js`
   - [ ] Node.js Version : `20.x`
 - [ ] 6 variables d'environnement configurées dans cPanel
 - [ ] `JWT_SECRET` généré et configuré
-- [ ] Dépendances installées via cPanel ("Run NPM Install")
+- [ ] Dépendances installées via cPanel ("Run NPM Install") - racine
+- [ ] Dépendances backend installées via SSH dans `server/` avec environnement activé
 - [ ] Application démarrée dans cPanel (statut "Running")
-- [ ] Prisma généré (`npm run db:generate`)
+- [ ] Prisma généré (`npm run db:generate` avec environnement activé)
 - [ ] Migrations appliquées (`npm run db:migrate:deploy`)
 - [ ] Admin créé (`npm run create-default-admin`)
-- [ ] Frontend buildé (`npm run build`)
+- [ ] Frontend buildé (`npm run build` avec environnement activé)
 - [ ] Application redémarrée dans cPanel
 - [ ] Site accessible sur `https://2nbdigital.com`
 - [ ] API accessible sur `https://2nbdigital.com/api/health`
@@ -489,20 +480,27 @@ Puis redémarrez l'application dans cPanel.
 
 ---
 
-## ⚠️ Règles Importantes
+## ⚠️ Règles Importantes (Basées sur la Documentation Officielle)
 
 1. **Ne jamais démarrer l'application manuellement** avec `node server.js` ou PM2
 2. **Utiliser uniquement cPanel** pour démarrer/redémarrer l'application
 3. **CloudLinux Passenger** gère automatiquement les processus Node.js
 4. **Toujours supprimer les node_modules** avant de créer/modifier l'application dans cPanel
 5. **Vérifier qu'aucun processus Node.js ne tourne** avant de créer l'application
+6. **Toujours activer l'environnement Node.js** avant d'exécuter npm/npx :
+   ```bash
+   source /home/cire1827/nodevenv/site-2nbdigital/20/bin/activate
+   ```
+7. **Installer les dépendances backend séparément** dans `server/` après avoir créé l'application dans cPanel
+8. **Utiliser `app.listen('passenger')`** au lieu de `app.listen(PORT)` pour Passenger (déjà configuré dans `server/server.js`)
 
 ---
 
-## 📞 Support
+## 📞 Support et Documentation Officielle
 
-- **Documentation O2Switch**: https://faq.o2switch.fr
-- **Support Node.js O2Switch**: https://faq.o2switch.fr/cpanel/logiciels/hebergement-nodejs-multi-version/
+- **Documentation O2Switch Node.js**: https://faq.o2switch.fr/cpanel/logiciels/hebergement-nodejs-multi-version/
+- **Guide O2Switch React/Node.js**: https://faq.o2switch.fr/guides/nodejs/application-reactjs/
+- **Documentation cPanel Node.js**: https://docs.cpanel.net/knowledge-base/web-services/how-to-install-a-node.js-application/
 - **Support PostgreSQL O2Switch**: https://faq.o2switch.fr/cpanel/bases-de-donnees/postgresql/
 
 ---
@@ -511,4 +509,4 @@ Puis redémarrez l'application dans cPanel.
 
 Votre site est maintenant déployé sur O2Switch et accessible sur **2nbdigital.com** !
 
-Pour toute question ou problème, consultez la section Dépannage ci-dessus.
+Ce guide est basé sur la documentation officielle O2Switch et cPanel. Pour toute question ou problème, consultez la section Dépannage ci-dessus ou la documentation officielle.

@@ -99,9 +99,21 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+// Pour Passenger (O2Switch), utiliser 'passenger' au lieu du port
+// Passenger intercepte automatiquement et gère les connexions
+// Selon la documentation O2Switch: https://faq.o2switch.fr/cpanel/logiciels/hebergement-nodejs-multi-version/
+if (process.env.NODE_ENV === 'production' && process.env.PORT) {
+  // Mode Passenger (production O2Switch)
+  // Passenger détecte automatiquement et intercepte l'appel listen()
+  app.listen('passenger', () => {
+    console.log('🚀 Server running on Passenger (O2Switch)');
+  });
+} else {
+  // Mode développement local
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+  });
+}
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
