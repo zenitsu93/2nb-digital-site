@@ -116,24 +116,19 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-// Pour Passenger (O2Switch), cPanel configure automatiquement le PORT
-// Passenger intercepte automatiquement les connexions sur ce port
+// Pour Passenger (O2Switch), on vérifie si PhusionPassenger est disponible
 // Selon la documentation O2Switch: https://faq.o2switch.fr/cpanel/logiciels/hebergement-nodejs-multi-version/
-// En production sur O2Switch, utiliser le PORT défini par cPanel
-// Si PORT n'est pas défini (ce qui ne devrait pas arriver), utiliser 'passenger' comme fallback
-if (isProduction) {
-  // Mode production (O2Switch avec Passenger)
-  // cPanel définit automatiquement PORT dans les variables d'environnement
-  // Si PORT n'est pas défini, utiliser 'passenger' comme fallback
-  const listenPort = process.env.PORT || 'passenger';
-  app.listen(listenPort, () => {
-    console.log(`🚀 Server running on Passenger (O2Switch)`);
+if (typeof PhusionPassenger !== 'undefined') {
+  // Mode Passenger (O2Switch)
+  // Passenger gère le port automatiquement
+  PhusionPassenger.configure({ autoInstall: false });
+  app.listen('passenger', () => {
+    console.log('🚀 Server running on Passenger (O2Switch)');
     console.log(`📁 Frontend URL: ${FRONTEND_URL}`);
     console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
-    console.log(`🔌 Listening on: ${listenPort}`);
   });
 } else {
-  // Mode développement local
+  // Mode développement local ou autre environnement
   app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
   });
