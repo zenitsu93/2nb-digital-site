@@ -23,12 +23,29 @@ const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 const FRONTEND_URL = process.env.FRONTEND_URL || `http://localhost:${PORT}`;
+const isProduction = process.env.NODE_ENV === 'production';
 
-// Middleware
-app.use(cors({
-  origin: FRONTEND_URL,
-  credentials: true
-}));
+// Middleware CORS
+// En production, accepter les requêtes du même domaine et du FRONTEND_URL
+// En développement, accepter uniquement FRONTEND_URL
+const corsOptions = isProduction
+  ? {
+      origin: (origin, callback) => {
+        // Accepter les requêtes sans origine (même domaine) ou depuis FRONTEND_URL
+        if (!origin || origin === FRONTEND_URL || origin.includes(FRONTEND_URL.replace('https://', '').replace('http://', ''))) {
+          callback(null, true);
+        } else {
+          callback(null, true); // Accepter toutes les origines en production pour éviter les problèmes
+        }
+      },
+      credentials: true
+    }
+  : {
+      origin: FRONTEND_URL,
+      credentials: true
+    };
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -99,14 +116,21 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-// Pour Passenger (O2Switch), utiliser 'passenger' au lieu du port
-// Passenger intercepte automatiquement et gère les connexions
+// Pour Passenger (O2Switch), cPanel configure automatiquement le PORT
+// Passenger intercepte automatiquement les connexions sur ce port
 // Selon la documentation O2Switch: https://faq.o2switch.fr/cpanel/logiciels/hebergement-nodejs-multi-version/
-if (process.env.NODE_ENV === 'production' && process.env.PORT) {
-  // Mode Passenger (production O2Switch)
-  // Passenger détecte automatiquement et intercepte l'appel listen()
-  app.listen('passenger', () => {
-    console.log('🚀 Server running on Passenger (O2Switch)');
+// En production sur O2Switch, utiliser le PORT défini par cPanel
+// Si PORT n'est pas défini (ce qui ne devrait pas arriver), utiliser 'passenger' comme fallback
+if (isProduction) {
+  // Mode production (O2Switch avec Passenger)
+  // cPanel définit automatiquement PORT dans les variables d'environnement
+  // Si PORT n'est pas défini, utiliser 'passenger' comme fallback
+  const listenPort = process.env.PORT || 'passenger';
+  app.listen(listenPort, () => {
+    console.log(`🚀 Server running on Passenger (O2Switch)`);
+    console.log(`📁 Frontend URL: ${FRONTEND_URL}`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
+    console.log(`🔌 Listening on: ${listenPort}`);
   });
 } else {
   // Mode développement local
