@@ -5,15 +5,15 @@
   "scripts": {
     "dev": "node --watch server.js",
     "start": "node server.js",
-    "db:migrate": "prisma migrate dev",
-    "db:migrate:deploy": "prisma migrate deploy",
-    "db:generate": "prisma generate",
-    "db:studio": "prisma studio",
+    "db:migrate": "npx prisma migrate dev",
+    "db:migrate:deploy": "npx prisma migrate deploy",
+    "db:generate": "npx prisma generate",
+    "db:studio": "npx prisma studio",
     "db:seed": "node prisma/seed.js",
     "create-default-admin": "node scripts/createDefaultAdmin.js"
   },
   "dependencies": {
-    "@prisma/client": "5.19.1",
+    "@prisma/client": "^5.19.1",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -26,6 +26,6 @@
     "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
-    "prisma": "5.19.1"
+    "prisma": "^5.19.1"
   }
 }
