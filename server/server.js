@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { PrismaClient } from '@prisma/client';
+import prisma from './lib/prisma.js';
 import serviceRoutes from './routes/services.js';
 import projectRoutes from './routes/projects.js';
 import articleRoutes from './routes/articles.js';
@@ -20,7 +20,6 @@ const __dirname = dirname(__filename);
 dotenv.config();
 
 const app = express();
-const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 const FRONTEND_URL = process.env.FRONTEND_URL || `http://localhost:${PORT}`;
 const isProduction = process.env.NODE_ENV === 'production';
