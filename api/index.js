@@ -25,17 +25,17 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes API
-app.use('/api/auth', authRoutes);
-app.use('/api/services', serviceRoutes);
-app.use('/api/projects', projectRoutes);
-app.use('/api/articles', articleRoutes);
-app.use('/api/partners', partnerRoutes);
-app.use('/api/testimonials', testimonialRoutes);
-app.use('/api/upload', authenticateToken, uploadRoutes);
+// Routes API - Note: Vercel ajoute déjà /api dans le rewrite, donc on ne le met pas ici
+app.use('/auth', authRoutes);
+app.use('/services', serviceRoutes);
+app.use('/projects', projectRoutes);
+app.use('/articles', articleRoutes);
+app.use('/partners', partnerRoutes);
+app.use('/testimonials', testimonialRoutes);
+app.use('/upload', authenticateToken, uploadRoutes);
 
 // Health check
-app.get('/api/health', (req, res) => {
+app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'API is running on Vercel' });
 });
 
@@ -46,5 +46,5 @@ app.use((err, req, res, next) => {
 });
 
 // Export pour Vercel Serverless Functions
-// Vercel utilise serverless-http pour adapter Express
+// Vercel gère automatiquement Express avec ce format
 export default app;
