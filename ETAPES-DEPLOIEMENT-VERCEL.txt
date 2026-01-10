@@ -1,0 +1,123 @@
+═══════════════════════════════════════════════════════════════
+  GUIDE RAPIDE - DÉPLOIEMENT SUR VERCEL
+═══════════════════════════════════════════════════════════════
+
+📋 ÉTAPES SIMPLIFIÉES :
+
+1️⃣  PRÉPARER VOTRE BASE DE DONNÉES POSTGRESQL (100% GRATUIT)
+   ────────────────────────────────────────────────────────────
+   
+   ⭐ Votre projet utilise déjà Prisma avec PostgreSQL !
+   ⭐ Vous avez juste besoin d'une base PostgreSQL GRATUITE :
+   
+   OPTION A - Vercel Postgres (Recommandé - Gratuit jusqu'à 256 MB) :
+   • Dans Vercel Dashboard → Storage → Create Database → Postgres
+   • C'est 100% GRATUIT et intégré avec Vercel !
+   
+   OPTION B - Supabase (Gratuit jusqu'à 500 MB) :
+   • https://supabase.com → Créez un compte gratuit
+   • Créez un projet → Settings → Database → Copiez la Connection String
+   
+   OPTION C - Neon (Gratuit jusqu'à 512 MB) :
+   • https://neon.tech → Créez un compte gratuit
+   • Créez une base → Copiez la Connection String
+   
+   ⚠️ Toutes ces options sont 100% GRATUITES pour commencer !
+
+2️⃣  CONFIGURER LES VARIABLES D'ENVIRONNEMENT SUR VERCEL
+   ──────────────────────────────────────────────────────
+   Allez sur votre projet Vercel → Settings → Environment Variables
+   
+   Ajoutez ces variables :
+   
+   ✓ DATABASE_URL = postgresql://... (votre URL de connexion)
+   ✓ JWT_SECRET = (générez avec: openssl rand -base64 32)
+   ✓ JWT_EXPIRES_IN = 7d
+   ✓ NODE_ENV = production
+   ✓ VITE_API_URL = (laissez vide ou mettez "/api")
+
+3️⃣  DÉPLOYER VIA L'INTERFACE VERCEL
+   ──────────────────────────────────
+   
+   OPTION A - Import depuis Git (Recommandé) :
+   • Poussez votre code sur GitHub/GitLab/Bitbucket
+   • Allez sur https://vercel.com/new
+   • Cliquez "Import Git Repository"
+   • Sélectionnez votre dépôt
+   • Vercel détectera automatiquement la configuration
+   • Ajoutez les variables d'environnement (étape 2)
+   • Cliquez "Deploy"
+
+   OPTION B - Upload Direct :
+   • Allez sur https://vercel.com/new
+   • Cliquez "Upload"
+   • Glissez-déposez votre dossier de projet
+   • Configurez :
+     - Framework Preset: Vite
+     - Build Command: npm run build
+     - Output Directory: dist
+     - Install Command: npm install && cd server && npm install
+   • Ajoutez les variables d'environnement
+   • Cliquez "Deploy"
+
+4️⃣  INITIALISER LA BASE DE DONNÉES
+   ──────────────────────────────────
+   
+   Après le déploiement, exécutez les migrations :
+   
+   • Installez Vercel CLI: npm i -g vercel
+   • Connectez-vous: vercel login
+   • Liez votre projet: vercel link
+   • Exécutez les migrations:
+     cd server
+     vercel env pull .env.local
+     npx prisma migrate deploy
+
+5️⃣  CRÉER L'ADMIN PAR DÉFAUT
+   ──────────────────────────
+   
+   cd server
+   node scripts/createDefaultAdmin.js
+   
+   Identifiants par défaut:
+   • Username: christian
+   • Password: j20023700
+   
+   ⚠️ CHANGEZ CES IDENTIFIANTS APRÈS LE PREMIER LOGIN !
+
+6️⃣  VÉRIFIER LE DÉPLOIEMENT
+   ──────────────────────────
+   
+   • Visitez votre URL Vercel
+   • Testez l'API: https://votre-site.vercel.app/api/health
+   • Connectez-vous à l'admin: https://votre-site.vercel.app/admin/login
+
+═══════════════════════════════════════════════════════════════
+  FICHIERS CRÉÉS/MODIFIÉS POUR VERCEL
+═══════════════════════════════════════════════════════════════
+
+✓ vercel.json          → Configuration Vercel
+✓ api/index.js         → Point d'entrée API pour Vercel
+✓ package.json         → Ajout script postinstall pour Prisma
+✓ DEPLOIEMENT-VERCEL.md → Guide détaillé complet
+
+═══════════════════════════════════════════════════════════════
+  NOTES IMPORTANTES
+═══════════════════════════════════════════════════════════════
+
+⚠️  UPLOADS DE FICHIERS
+   Vercel ne supporte pas l'écriture de fichiers sur le système.
+   Pour les uploads, utilisez Cloudinary, AWS S3 ou Vercel Blob.
+
+⚠️  BASE DE DONNÉES (100% GRATUIT)
+   • Vercel Postgres : Gratuit jusqu'à 256 MB ⭐
+   • Supabase : Gratuit jusqu'à 500 MB ⭐
+   • Neon : Gratuit jusqu'à 512 MB ⭐
+   Toutes ces options sont GRATUITES pour commencer !
+
+⚠️  LIMITES
+   Fonctions serverless: 10s (gratuit) ou 60s (Pro)
+
+═══════════════════════════════════════════════════════════════
+
+Pour plus de détails, consultez DEPLOIEMENT-VERCEL.md
