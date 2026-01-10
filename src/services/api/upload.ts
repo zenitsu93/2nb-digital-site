@@ -21,7 +21,8 @@ export const uploadApi = {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/upload`, {
+    const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001/api' : '/api');
+    const response = await fetch(`${apiUrl}/upload`, {
       method: 'POST',
       headers,
       body: formData,

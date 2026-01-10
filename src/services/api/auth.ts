@@ -32,7 +32,7 @@ export const authApi = {
 
   verify: async (token: string): Promise<VerifyResponse> => {
     // Créer une requête manuelle pour éviter la double inclusion du token
-    const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+    const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3001/api' : '/api');
     const response = await fetch(`${API_BASE_URL}/auth/verify`, {
       method: 'POST',
       headers: {
