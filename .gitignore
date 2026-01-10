@@ -39,3 +39,5 @@ server/.env.development
 id_rsa
 id_rsa.pub
 .vercel
+.vercel
+.env*.local
