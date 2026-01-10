@@ -54,8 +54,8 @@ const VideoPlayer = () => {
     const video = videoRef.current;
     if (!video || hasStarted) return;
 
-    let timer: NodeJS.Timeout;
-    let fallbackTimer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setTimeout>;
+    let fallbackTimer: ReturnType<typeof setTimeout>;
 
     // Attendre que la vidéo soit prête
     const handleCanPlay = () => {
